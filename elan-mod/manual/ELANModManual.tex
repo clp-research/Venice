@@ -1,0 +1,117 @@
+\documentclass[german,a4paper]{article}
+%\pagestyle{headings}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex]{graphics}
+\usepackage{graphicx} 
+\usepackage[pdftex]{thumbpdf}
+\usepackage{listings}
+\lstset{
+  language=[LaTeX]TeX,
+  basicstyle=\ttfamily,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\usepackage[margin=3cm]{geometry}
+
+\usepackage[
+        pdftex,
+        a4paper,
+        bookmarks,
+        bookmarksopen=true,
+        bookmarksnumbered=true,
+        pdfauthor={Oliver Eickmeyer},
+        pdftitle={ELANMod Manual},
+        colorlinks,
+        linkcolor=black,
+        urlcolor=blue,
+        citecolor=black
+]{hyperref}
+
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage[font=small,position=bottom,skip=0cm]{caption}
+\usepackage{mathpazo}
+\usepackage{floatflt}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Eigentliches Dokument
+
+\begin{document}
+
+%\begin{titlepage}
+%\vspace*{1cm}  
+\begin{center}
+{\LARGE\bfseries ELANMod Manual}\\[1.0ex]
+\end{center}
+
+%\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+ELANMod is a modification for ELAN. ELAN is an annotation tool, see
+\url{https://tla.mpi.nl/tools/tla-tools/elan/} for more information.
+
+With this modification it is possible to connect ELAN and VeniceHub via remote procedure call (RPC), so that the playback of VeniceHub will be synchronized with the playback of ELAN.
+
+\section{Installation}
+
+Download ELAN source code from \url{https://tla.mpi.nl/tools/tla-tools/elan/download/}. Be sure to download the version for which the modification is made for.
+
+Then copy the files of the modification just into the ELAN folder. Depending on the version there will be one or two files overwritten: ElanFrame2.java will be overwritten in every case. From version 4.8.0 on the pom.xml will also be overwritten, because with this version the developers of ELAN switched from ant to maven.
+
+Now execute the batch file \texttt{installLib.sh}. This will install one library that is unfortunately not available online, so maven can not find it by its own.
+
+The final step would be to call maven (for example with \texttt{mvn package}) and maven will build the application and download all necessary librarys. This can take some time. ELAN will be started automatically. But before the modified ELAN starts, VeniceHub should be started first (see section \ref{sec:usage}).
+
+\section{Usage}
+\label{sec:usage}
+
+To use the modified ELAN in conjunction with VeniceHub, first start VeniceHub. Usually that would be a command like:
+\begin{lstlisting}
+java -jar VeniceHub.jar -i Disk -f MyLogFile.xio.gz -o IIO
+\end{lstlisting}
+
+Then start the modified ELAN with
+\begin{lstlisting}
+mvn package
+\end{lstlisting}
+
+If maven is building ELAN the first time, it can take some time to download all dependencies. ELAN will be started automatically after maven finishes building.
+
+The default values of both programms are attuned to each other. For the RPC connection between modified ELAN and VeniceHub the default address is \texttt{localhost} and the default port is \texttt{4243}.
+See section \ref{sec:config} how to change address and port.
+
+After quitting ELAN, maven could need some time to finish.
+
+Modified ELAN should be stopped before VeniceHub is stopped.
+
+\section{Configuration}
+\label{sec:config}
+
+The configuration of the modified ELAN is set with the file \texttt{config.properties}.
+The relevant properties for the connection with VeniceHub are
+\begin{lstlisting}
+browserIP=localhost
+browserPort=4243
+\end{lstlisting}
+
+To change those values for VeniceHub, run VeniceHub with the options \texttt{--rpcServerAdress} and \texttt{--rpcServerPort}
+
+In the configuration file for the modified ELAN there is a property \texttt{syncFreq}. It tells ELAN how often it send a seek command to VeniceHub to have it synchronized.
+
+\section{Trouble shooting}
+
+If VeniceHub gets stucked in a loop and doesn't stop skipping, try the runtime command \texttt{reset}.
+
+If you want to use a version that is not supported by the mod, see the README how to adapt the modification for other versions of ELAN (should be done only by experienced users).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document} 
