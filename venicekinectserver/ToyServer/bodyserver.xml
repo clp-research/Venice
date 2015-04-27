@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Sources>
+<Sensor name="Venice">
+  <Namespace name="Body1">
+    <slot name="JointPositions1" type="MFVec3f"/>
+    <slot name="JointPositions2" type="MFVec3f"/>
+    <slot name="JointPositions3" type="MFVec3f"/>
+    <slot name="JointPositions4" type="MFVec3f"/>
+    <slot name="JointPositions5" type="MFVec3f"/>
+    <slot name="JointPositions6" type="MFVec3f"/>
+  </Namespace>
+</Sensor>
+</Sources>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' profile='Full' version='3.0' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene DEF='scene'>
+
+<!-- =========================================================
+			    Extern Proto declarations
+  =================================================================  -->
+
+<ExternProtoDeclare name="FaceScript" url='MF_face_script_kinectv2.x3d#FaceScript'>
+        <field name='faceBoxTopLeft' type='SFVec2f' accessType='inputOnly' appinfo = "Put something here" />
+<!--        <field name='faceBoxBottomRight' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+        <field name='faceEyeLeft' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+        <field name='faceEyeRight' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+        <field name='faceNose' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+        <field name='faceMouthLeftCorner' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+        <field name='faceMouthRightCorner' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+        <field name='faceRotation' type='SFRotation' accessType='initializeOnly' appinfo = "Put something here" />
+        <field name='faceProperties' type='SFString' accessType='initializeOnly' appinfo = "Put something here" /> 
+-->
+</ExternProtoDeclare>
+
+
+<!-- =========================================================
+			    I/O sensor definitions
+  =================================================================  -->
+
+<IOSensor type='Network' DEF='Network'>
+  <field accessType='outputOnly'  name='*/FaceBoxTopLeft'  type='MFVec2f'/>
+  <field accessType='outputOnly'  name='*/FaceProperties'  type='MFString'/>
+<!--  <field accessType='outputOnly'  name='*/FaceBoxBottomRight'  type='MFVec2f'/>
+  <field accessType='outputOnly'  name='*/FaceEyeLeft'  type='MFVec2f'/>
+  <field accessType='outputOnly'  name='*/FaceEyeRight'  type='MFVec2f'/>
+  <field accessType='outputOnly'  name='*/FaceNose'  type='MFVec2f'/>
+  <field accessType='outputOnly'  name='*/FaceMouthLeftCorner'  type='MFVec2f'/>
+  <field accessType='outputOnly'  name='*/FaceMouthRightCorner'  type='MFVec2f'/>
+  <field accessType='outputOnly'  name='*/FaceRotation'  type='MFRotation'/>
+  
+-->
+</IOSensor>
+
+  
+  
+    <Splitter DEF='split1' mode='sorted' enabled='TRUE'/>
+    
+    <!--
+    <Splitter DEF='split2' mode='sorted' enabled='TRUE'/>  
+    <Splitter DEF='split3' mode='sorted' enabled='TRUE'/>  
+    <Splitter DEF='split4' mode='sorted' enabled='TRUE'/>  
+    <Splitter DEF='split5' mode='sorted' enabled='TRUE'/>  
+    <Splitter DEF='split6' mode='sorted' enabled='TRUE'/>    
+         -->
+  
+  
+
+
+<!-- =========================================================
+			dynamic scene geometries
+  =================================================================  -->
+  
+<Transform translation='0 1 0 '>
+<ProtoInstance DEF='faceScript1' name='FaceScript' containerField='children'>
+		<fieldValue name="faceBoxTopLeft" value='1.00 1.00' />		
+</ProtoInstance>
+</Transform>
+
+<Transform translation='0 2 0'>
+<ProtoInstance DEF='faceScript2' name='FaceScript' containerField='children'>
+		<fieldValue name="faceBoxTopLeft" value='1.00 1.00' />		
+</ProtoInstance>
+</Transform>
+
+<Transform translation='0 3 0'>
+<ProtoInstance DEF='faceScript3' name='FaceScript' containerField='children'>
+		<fieldValue name="faceBoxTopLeft" value='1.00 1.00' />		
+</ProtoInstance>
+</Transform>
+
+<Transform translation='0 4 0'>
+<ProtoInstance DEF='faceScript4' name='FaceScript' containerField='children'>
+		<fieldValue name="faceBoxTopLeft" value='1.00 1.00' />		
+</ProtoInstance>
+</Transform>
+
+<Transform translation='0 5 0'>
+<ProtoInstance DEF='faceScript5' name='FaceScript' containerField='children'>
+		<fieldValue name="faceBoxTopLeft" value='1.00 1.00' />		
+</ProtoInstance>
+</Transform>
+
+<Transform translation='0 6 0'>
+<ProtoInstance DEF='faceScript6' name='FaceScript' containerField='children'>
+		<fieldValue name="faceBoxTopLeft" value='1.00 1.00' />		
+</ProtoInstance>
+</Transform>
+
+
+
+<!-- =========================================================
+			    Routes
+  =================================================================  -->
+  
+  
+  <ROUTE fromNode="Network" fromField="*/FaceBoxTopLeft" toNode="split1" toField="in"/>
+
+  
+  <!--
+  <ROUTE fromNode="Network" fromField="*/FaceBoxTopLeft" toNode="split2" toField="in"/>
+  <ROUTE fromNode="Network" fromField="*/FaceBoxTopLeft" toNode="split3" toField="in"/>
+  <ROUTE fromNode="Network" fromField="*/FaceBoxTopLeft" toNode="split4" toField="in"/>
+  <ROUTE fromNode="Network" fromField="*/FaceBoxTopLeft" toNode="split5" toField="in"/>
+  <ROUTE fromNode="Network" fromField="*/FaceBoxTopLeft" toNode="split6" toField="in"/>
+  -->
+  
+    
+  <ROUTE fromNode="split1" fromField="out" toNode="faceScript1" toField="faceBoxTopLeft"/>
+  <ROUTE fromNode="split1" fromField="out" toNode="faceScript2" toField="faceBoxTopLeft"/>
+  <!--
+  <ROUTE fromNode="split1" fromField="out" toNode="faceScript3" toField="faceBoxTopLeft"/>
+  <ROUTE fromNode="split1" fromField="out" toNode="faceScript4" toField="faceBoxTopLeft"/>
+  <ROUTE fromNode="split1" fromField="out" toNode="faceScript5" toField="faceBoxTopLeft"/>
+  <ROUTE fromNode="split1" fromField="out" toNode="faceScript6" toField="faceBoxTopLeft"/>
+  -->
+  
+<!--  <ROUTE fromNode="Network" fromField="*/FaceBoxBottomRight" toNode="faceScript" toField="FaceBoxBottomRight"/>
+  <ROUTE fromNode="Network" fromField="*/FaceEyeLeft" toNode="faceScript" toField="FaceEyeLeft"/>
+  <ROUTE fromNode="Network" fromField="*/FaceEyeRight" toNode="faceScript" toField="FaceEyeRight"/>
+  <ROUTE fromNode="Network" fromField="*/FaceNose" toNode="faceScript" toField="FaceNose"/>
+  <ROUTE fromNode="Network" fromField="*/FaceMouthLeftCorner" toNode="faceScript" toField="FaceMouthLeftCorner"/>
+  <ROUTE fromNode="Network" fromField="*/FaceMouthRightCorner" toNode="faceScript" toField="FaceMouthRightCorner"/>
+  <ROUTE fromNode="Network" fromField="*/FaceRotation" toNode="faceScript" toField="FaceRotation"/>
+  <ROUTE fromNode="Network" fromField="*/FaceProperties" toNode="faceScript" toField="FaceProperties"/>
+  -->
+    	
+
+  </Scene>
+</X3D>

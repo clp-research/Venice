@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<X3D profile='Full'>
+  <Scene>
+<!-- =================================================
+Short Description: Leap hand prototype. Receiving hand positions and
+                              bone positions, drawing 2 hands
+Filename: leap.x3d
+ =================================================-->
+
+
+	<Viewpoint DEF="vie1" description="new view" position='0 10 25' />
+<!-- ============================================
+               Extern Proto declarations
+        ============================================ -->
+
+<ExternProtoDeclare name="HandScript" url='LeapHandProto.x3d#HandScript'>
+     <field name='hand_changed' type='SFInt32' accessType='inputOnly' 
+                appinfo='Trigger node to redraw hands'/>
+     <field name='handColor' type='SFColor' accessType='initializeOnly' 
+                value ='0 0 1'/>
+     <field name='handTransparency' type='SFFloat' accessType='initializeOnly' value='0.0'/>
+     <field name='fingerCrossSection' type='MFVec2f'  accessType='initializeOnly'/>
+
+     <field name='PalmPosition' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+
+     <field name='dist0' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='dist1' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='dist2' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='dist3' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='dist4' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+
+     <field name='inter0' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='inter1' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='inter2' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='inter3' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='inter4' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+
+     <field name='prox0' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='prox1' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='prox2' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='prox3' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='prox4' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+
+     <field name='meta0' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='meta1' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='meta2' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='meta3' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+     <field name='meta4' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+
+</ExternProtoDeclare>
+
+<!-- ============================================
+     I/O sensor Nodes definitions
+     ============================================== -->
+
+   <IOSensor type = 'Network' DEF = 'Network'>
+        <field accessType = 'outputOnly' name = "*/Leapdata/FrameID"  type = "SFInt32"/>
+        <field accessType = 'outputOnly' name = "*/Leapdata/HandNum" type = "SFInt32"/>
+	<field accessType = 'outputOnly' name = "*/Leapdata/PalmPosition"  type = "MFVec3f"/>
+        <field accessType = 'outputOnly' name = "*/Leapdata/DistNextJoint"  type = "MFVec3f"/>
+        <field accessType = 'outputOnly' name = "*/Leapdata/InterNextJoint"  type ="MFVec3f"/>
+        <field accessType = 'outputOnly' name = "*/Leapdata/ProxNextJoint"  type = "MFVec3f"/>
+        <field accessType = 'outputOnly' name = "*/Leapdata/MetaNextJoint"  type = "MFVec3f"/>
+   </IOSensor>
+
+<!-- =========== spliters ========== -->
+    <Splitter DEF='PalmSplitter' mode='sorted' enabled='TRUE'/>
+    <Splitter DEF='DistSplitter' mode='sorted' enabled='TRUE'/>
+    <Splitter DEF='InterSplitter' mode='sorted' enabled='TRUE'/>
+    <Splitter DEF='ProxSplitter' mode='sorted' enabled='TRUE'/>
+    <Splitter DEF='MetaSplitter' mode='sorted' enabled='TRUE'/>
+
+<!-- Dynamic Geometries -->
+    <Transform DEF = 'Text' translation='-2 1.5 0'>
+     <Shape>
+      <Text DEF='mytext' string="'Frame ID:' 'Hands Number:'" />
+      <Appearance>
+	<Material diffuseColor = "1 1 1"/>
+	</Appearance>
+     </Shape>
+   </Transform>
+
+  <Transform translation='0 1 0' scale="0.05 0.05 0.05" >
+    <ProtoInstance DEF='hand1' name='handScript' containerField='children'>
+      <fieldValue name='handColor' value='0 1 1'/>
+    </ProtoInstance>
+  </Transform>
+
+  <Transform translation='0 1 0' scale="0.05 0.05 0.05" >
+    <ProtoInstance DEF='hand2' name='handScript' containerField='children'>
+      <fieldValue name='handColor' value='0 1 1'/>
+    </ProtoInstance>
+  </Transform>
+
+
+<!--========== ROUTES ========== -->
+<ROUTE fromNode='Network' fromField=' */Leapdata/PalmPosition' toNode='PalmSplitter' toField='in'/>
+<ROUTE fromNode='Network' fromField=' */Leapdata/DistNextJoint' toNode='DistSplitter' toField='in'/>
+<ROUTE fromNode='Network' fromField=' */Leapdata/InterNextJoint' toNode='InterSplitter' toField='in'/>
+<ROUTE fromNode='Network' fromField=' */Leapdata/ProxNextJoint' toNode='ProxSplitter' toField='in'/>
+<ROUTE fromNode='Network' fromField=' */Leapdata/MetaNextJoint' toNode='MetaSplitter' toField='in'/>
+
+<ROUTE fromNode='PalmSplitter' fromField='out' toNode='hand1' toField='PalmPosition'/>
+<ROUTE fromNode='PalmSplitter' fromField='out' toNode='hand2' toField='PalmPosition'/>
+
+
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand1' toField='dist0'/>
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand1' toField='dist1'/>
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand1' toField='dist2'/>
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand1' toField='dist3'/>
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand1' toField='dist4'/>
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand2' toField='dist0'/>
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand2' toField='dist1'/>
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand2' toField='dist2'/>
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand2' toField='dist3'/>
+<ROUTE fromNode='DistSplitter' fromField='out' toNode='hand2' toField='dist4'/>
+
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand1' toField='inter0'/>
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand1' toField='inter1'/>
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand1' toField='inter2'/>
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand1' toField='inter3'/>
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand1' toField='inter4'/>
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand2' toField='inter0'/>
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand2' toField='inter1'/>
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand2' toField='inter2'/>
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand2' toField='inter3'/>
+<ROUTE fromNode='InterSplitter' fromField='out' toNode='hand2' toField='inter4'/>
+
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand1' toField='prox0'/>
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand1' toField='prox1'/>
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand1' toField='prox2'/>
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand1' toField='prox3'/>
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand1' toField='prox4'/>
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand2' toField='prox0'/>
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand2' toField='prox1'/>
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand2' toField='prox2'/>
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand2' toField='prox3'/>
+<ROUTE fromNode='ProxSplitter' fromField='out' toNode='hand2' toField='prox4'/>
+
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand1' toField='meta0'/>
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand1' toField='meta1'/>
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand1' toField='meta2'/>
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand1' toField='meta3'/>
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand1' toField='meta4'/>
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand2' toField='meta0'/>
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand2' toField='meta1'/>
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand2' toField='meta2'/>
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand2' toField='meta3'/>
+<ROUTE fromNode='MetaSplitter' fromField='out' toNode='hand2' toField='meta4'/>
+
+<!-- SCRIPTS -->
+ <Script DEF='script' directOutput = 'True'>
+   <field accessType='initializeOnly' type='SFNode' name='text'>
+     <Group USE = 'mytext'/>
+   </field>
+
+   <field accessType = 'inputOnly' name = "FrameID" type = "SFInt32"/>
+   <field accessType = 'inputOnly' name = "HandNum" type = "SFInt32"/>
+
+   <![CDATA[ecmascript:
+
+     function HandNum(value)
+    {
+     text.string[1] = "Hands Number: " + value;
+    }
+    function FrameID(value)
+    {
+     text.string[0] = "Frame ID: " + value;
+    }
+            ]]>
+     </Script>
+
+<ROUTE fromNode='Network' fromField='*/Leapdata/FrameID' 
+               toNode='script' toField='FrameID'/>
+<ROUTE fromNode='Network' fromField='*/Leapdata/HandNum'
+               toNode='script' toField='HandNum'/>
+<ROUTE fromNode='Network' fromField='*/Leapdata/FrameID' 
+               toNode='hand1' toField='hand_changed'/>
+<ROUTE fromNode='Network' fromField='*/Leapdata/FrameID' 
+               toNode='hand2' toField='hand_changed'/>
+</Scene>
+</X3D> 

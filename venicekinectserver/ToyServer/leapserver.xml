@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<Sources>
+<Sensor name = "Leap">
+    <Namespace name  = "Leapdata">
+        <slot name = "FrameID" type = "SFInt32"/>
+
+        <slot name = "ArmDirection" type = "MFVec3f"/>
+        <slot name = "ElbowPosition" type = "MFVec3f"/>
+        <slot name = "WristPosition" type = "MFVec3f"/>
+        <slot name = "ArmWidth" type = "MFString"/>
+        <slot name = "ArmLength" type = "MFString"/>
+
+        <slot name = "HandNum" type = "SFInt32"/>
+	<slot name = "HandType" type = "MFString"/>
+        <slot name = "HandID" type = "MFString"/>
+        <slot name = "HandConfid" type = "MFString"/>
+        <slot name = "HandDirection" type = "MFVec3f"/>
+        <slot name = "SphereCenter" type = "MFVec3f"/>
+        <slot name = "SphereRadius" type = "MFString"/>
+
+        <slot name = "PalmWidth" type = "MFString"/>
+	<slot name = "PalmPosition" type = "MFVec3f"/>
+        <slot name = "PalmVelocity" type = "MFVec3f"/>
+        <slot name = "PalmNormal" type = "MFVec3f"/>
+        <slot name = "PalmPitch" type = "MFString"/>
+        <slot name = "PalmYaw" type = "MFString"/>
+        <slot name = "PalmRoll" type = "MFString"/>
+        <slot name = "GrabStrength" type = "MFString"/>
+        <slot name = "PinchStrength" type = "MFString"/>
+
+	<slot name = "FingerType" type = "MFString"/>
+	<slot name = "FingerLength" type = "MFString"/>
+	<slot name = "FingerWidth" type = "MFString"/>
+        <slot name = "TipDirection" type = "MFVec3f"/>
+        <slot name = "TipPosition" type = "MFVec3f"/>
+
+        <slot name = "MetaDirection" type = "MFVec3f"/>
+        <slot name = "ProxDirection" type = "MFVec3f"/>
+        <slot name = "InterDirection" type = "MFVec3f"/>
+        <slot name = "DistDirection" type = "MFVec3f"/>
+
+        <slot name = "MetaPrevJoint" type = "MFVec3f"/>
+        <slot name = "ProxPrevJoint" type = "MFVec3f"/>
+        <slot name = "InterPrevJoint" type = "MFVec3f"/>
+        <slot name = "DistPrevJoint" type = "MFVec3f"/>
+
+        <slot name = "MetaNextJoint" type = "MFVec3f"/>
+        <slot name = "ProxNextJoint" type = "MFVec3f"/>
+        <slot name = "InterNextJoint" type = "MFVec3f"/>
+        <slot name = "DistNextJoint" type = "MFVec3f"/>
+
+        <slot name = "MetaLength" type = "MFString"/>
+        <slot name = "ProxLength" type = "MFString"/>
+        <slot name = "InterLength" type = "MFString"/>
+        <slot name = "DistLength" type = "MFString"/>
+
+        <slot name = "MetaProxAngle" type = "MFString"/>
+	<slot name = "ProxInterAngle" type = "MFString"/>
+	<slot name = "InterDistAngle" type = "MFString"/>
+
+	<slot name = "ThumbIndexAngle" type = "MFString"/>
+	<slot name = "IndexMidAngle" type = "MFString"/>
+	<slot name = "MidRingAngle" type = "MFString"/>
+	<slot name = "RingPinkyAngle" type = "MFString"/>
+
+        <slot name = "GestureNum" type = "SFInt32"/>
+	<slot name =  "GesturePosition" type = "MFVec3f"/>
+        <slot name = "GestureType" type = "MFString"/>
+        <slot name = "GestureState" type = "MFString"/>
+        <slot name = "GestureDuration" type = "MFString"/>
+
+        <slot name = "ToolNum" type = "SFInt32"/>
+        <slot name =  "ToolPosition" type = "MFVec3f"/>
+        <slot name =  "ToolDirection" type = "MFVec3f"/>
+    </Namespace>
+</Sensor>
+</Sources>

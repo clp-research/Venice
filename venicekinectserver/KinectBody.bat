@@ -1,0 +1,1 @@
+java -jar VeniceHub.jar -i VP --vpport 5005 --vpfile body.xml -o Disk -f log.xio.gz

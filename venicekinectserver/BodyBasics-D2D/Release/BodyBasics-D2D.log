@@ -1,0 +1,17 @@
+﻿Der Buildvorgang wurde am 05.02.2015 16:58:42 gestartet.
+     1>Projekt "C:\Users\dsg-labuser\Desktop\KinectSoftware\BodyBasics-D2D\BodyBasics-D2D.vcxproj" auf Knoten "2", Build Ziel(e).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W1 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt BodyBasics.cpp
+         BodyBasics.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\dsg-labuser\Desktop\KinectSoftware\BodyBasics-D2D\Release\BodyBasics-D2D.exe" /INCREMENTAL:NO /NOLOGO kinect20.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\dsg-labuser\Desktop\KinectSoftware\BodyBasics-D2D\Release\BodyBasics-D2D.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\dsg-labuser\Desktop\KinectSoftware\BodyBasics-D2D\Release\BodyBasics-D2D.lib" /MACHINE:X86 /SAFESEH Release\BodyBasics.res
+         Release\BodyBasics.obj
+         Code wird generiert.
+     1>c:\users\dsg-labuser\desktop\kinectsoftware\bodybasics-d2d\bodybasics.cpp(61): warning C4715: "wWinMain": Nicht alle Steuerelementpfade geben einen Wert zurück.
+         Codegenerierung ist abgeschlossen.
+         BodyBasics-D2D.vcxproj -> C:\Users\dsg-labuser\Desktop\KinectSoftware\BodyBasics-D2D\Release\BodyBasics-D2D.exe
+     1>Die Erstellung des Projekts "C:\Users\dsg-labuser\Desktop\KinectSoftware\BodyBasics-D2D\BodyBasics-D2D.vcxproj" ist abgeschlossen, Build Ziel(e).
+
+Build erfolgreich.
+
+Verstrichene Zeit 00:00:01.78

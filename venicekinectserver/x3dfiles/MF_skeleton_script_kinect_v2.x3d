@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.2//EN" "http://www.web3d.org/specifications/x3d-3.2.dtd">
+<X3D profile='Full' version='3.0' >
+
+<!--
+
+Short Description: Skeleton prototype. Receives joint coordinates and draws a solid skeleton
+
+Hint: Many Instances of this prototype may exist in the parent scene without any code duplication
+
+Filename: skeleton_script.x3d
+
+Author(s):
+
+        Spyros Kousidis (spyros.kousidis@uni-bielefeld.de)
+        Dialogue Systems Group
+        Bielefeld University
+
+ -->
+
+<ProtoDeclare name="SkeletonScript" >
+    <ProtoInterface>
+        <field name='skeletonColor' type='SFColor' accessType='initializeOnly' value='0 0 1'
+                appinfo = "The color of the skeleton" />
+        <field name='skeletonBodyTransparency' type='SFFloat' accessType='initializeOnly' value='0.0'
+                appinfo = "Transparency of the skeleton body" />
+        <field name='skeletonHeadTransparency' type='SFFloat' accessType='initializeOnly' value='0.0'
+                appinfo = "Transparency of the skeleton Head" />
+        <field name='drawFullBody' type='SFInt32' accessType='initializeOnly' value='0'
+                appinfo = "Change value to -1 in order to draw only the upper body"  />
+        <field name='limbCrossSection' type='MFVec2f' accessType='initializeOnly' value = "1.00 0.00 0.92 -0.38 0.71 -0.71 0.38 -0.92 0.00 -1.00 -0.38 -0.92 -0.71 -0.71 -0.92 -0.38 -1.00 -0.00 -0.92 0.38 -0.71 0.71 -0.38 0.92 0.00  1.00 0.38 0.92 0.71 0.71 0.92 0.38 1.00 0.00" scale="0.05 0.05" appinfo = "Cross section of limbs" />
+        <field name='jointPositions' type='MFVec3f' accessType='inputOnly'
+                appinfo = "positions of the skeleton joints"    />
+        <field name='skeleton_changed' type='SFInt32' accessType='inputOnly'
+                appinfo = "Trigger node to redraw skeleton" />
+    </ProtoInterface>
+
+
+    <ProtoBody>
+
+
+        <Group DEF="solidSkeleton">
+
+        <!-- The head on its own can have different transparecny (e.g. for overlaying the eyes) -->
+
+        <Transform DEF="headPos">
+
+                <Shape>
+                        <Appearance>
+                        <Material>
+                        <IS>
+                        <connect nodeField = "diffuseColor" protoField="skeletonColor" />
+                        <connect nodeField = "transparency" protoField="skeletonHeadTransparency" />
+                        </IS>
+                        </Material>
+                        </Appearance>
+                        <Sphere radius='0.15'/>
+                </Shape>
+        </Transform>
+
+        <!-- First Group: The 25 Joints of the body -->
+
+         <!-- Sub-group 1.1 : The upper body joints -->
+
+        <AppearanceGroup>
+                <Appearance>
+                <Material>
+                        <IS>
+                        <connect nodeField = "diffuseColor" protoField="skeletonColor" />
+                        <connect nodeField = "transparency" protoField="skeletonBodyTransparency" />
+                        </IS>
+                </Material>
+                </Appearance>
+
+        <Transform DEF="leftHandPos">
+                <Sphere radius='0.025'/>
+        </Transform>
+
+        <Transform DEF="rightHandPos">
+                <Sphere radius='0.025'/>
+        </Transform>
+
+        <Transform DEF="leftHandTipPos">
+                <Sphere radius='0.020'/>
+        </Transform>
+
+        <Transform DEF="rightHandTipPos">
+                <Sphere radius='0.020'/>
+        </Transform>
+
+        <Transform DEF="leftThumbPos">
+                <Sphere radius='0.025'/>
+        </Transform>
+
+        <Transform DEF="rightThumbPos">
+                <Sphere radius='0.025'/>
+        </Transform>
+
+        <Transform DEF="leftWristPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="rightWristPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="leftElbowPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="rightElbowPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="leftShoulderPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="rightShoulderPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="neckPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="spineBasePos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="spineMidPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="spineShoulderPos">
+               <Sphere radius='0.05'/>
+        </Transform>
+
+         </AppearanceGroup>
+
+         <!-- Sub-group 1.2 : The lower body joints -->
+
+        <Switch DEF='LowerBodyJoints'>
+
+         <IS>
+         <connect nodeField = "whichChoice" protoField='drawFullBody' />
+         </IS>
+         
+         <AppearanceGroup>
+                <Appearance>
+                <Material>
+                        <IS>
+                        <connect nodeField = "diffuseColor" protoField="skeletonColor" />
+                        <connect nodeField = "transparency" protoField="skeletonBodyTransparency" />
+                        </IS>
+                </Material>
+                </Appearance>
+
+        <Transform DEF="leftHipPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="rightHipPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="leftKneePos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="rightKneePos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="leftFootPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="rightFootPos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="leftAnklePos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        <Transform DEF="rightAnklePos">
+                <Sphere radius='0.05'/>
+        </Transform>
+
+        </AppearanceGroup>
+
+        </Switch>
+
+        <!-- Second Group: The extrusions that represent the limbs -->
+ 
+         <!-- Sub-group 2.1 : The upper body limbs  -->
+
+        <AppearanceGroup>
+                <Appearance>
+                <Material>
+                        <IS>
+                        <connect nodeField = "diffuseColor" protoField="skeletonColor" />
+                        <connect nodeField = "transparency" protoField="skeletonBodyTransparency" />
+                        </IS>
+                </Material>
+                </Appearance>
+
+                <Shape>
+                        <Extrusion DEF = "leftUpperArm" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "rightUpperArm" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "leftLowerArm" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "rightLowerArm" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "neck" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "torso" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "waist" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+        </AppearanceGroup>
+
+        <!-- Sub-group 2.2 : The lower body limbs -->
+
+       <Switch DEF='LowerBodyLimbs'>
+
+         <IS>
+         <connect nodeField = "whichChoice" protoField="drawFullBody" />
+         </IS>
+
+        <AppearanceGroup>
+                <Appearance>
+                <Material>
+                        <IS>
+                        <connect nodeField = "diffuseColor" protoField="skeletonColor" />
+                        <connect nodeField = "transparency" protoField="skeletonBodyTransparency" />
+                        </IS>
+                </Material>
+                </Appearance>
+
+                 <Shape>
+                        <Extrusion DEF = "leftUpperLeg" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "rightUpperLeg" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "leftLowerLeg" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "rightLowerLeg" scale="0.05 0.05">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+
+        </AppearanceGroup>
+       </Switch>
+
+         <!-- Third Group: The extrusions that represent the fingers -->
+
+        <AppearanceGroup>
+                <Appearance>
+                <Material>
+                        <IS>
+                        <connect nodeField = "diffuseColor" protoField="skeletonColor" />
+                        <connect nodeField = "transparency" protoField="skeletonBodyTransparency" />
+                        </IS>
+                </Material>
+                </Appearance>
+
+                <Shape>
+                        <Extrusion DEF = "leftLongFinger" scale="0.020 0.020">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "rightLongFinger" scale="0.020 0.020">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+                <Shape>
+                        <Extrusion DEF = "leftShortFinger" scale="0.025 0.025">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+
+                 <Shape>
+                        <Extrusion DEF = "rightShortFinger" scale="0.025 0.025">
+                        <IS>
+                        <connect nodeField = "crossSection" protoField="limbCrossSection" />
+                        </IS>
+                        </Extrusion>
+                </Shape>
+        </AppearanceGroup>
+
+        </Group>
+
+         <Script DEF='solidSkeletonScript'>
+
+         <field name='skeleton_changed' accessType='inputOnly' type='SFInt32' />
+         <field name='jointPositions' accessType='inputOutput' type='MFVec3f' value = '0 0 0' />
+
+         <field accessType='outputOnly' name='AnkleLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='AnkleRight' type='SFVec3f'/>
+         <field accessType='outputOnly' name='ElbowLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='ElbowRight' type='SFVec3f' />
+         <field accessType='outputOnly' name='FootLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='FootRight' type='SFVec3f' />
+         <field accessType='outputOnly' name='HandLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='HandRight' type='SFVec3f' />
+         <field accessType='outputOnly' name='HandTipLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='HandTipRight' type='SFVec3f' />
+         <field accessType='outputOnly' name='ThumbLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='ThumbRight' type='SFVec3f' />
+         <field accessType='outputOnly' name='Head' type='SFVec3f' />
+         <field accessType='outputOnly' name='Neck' type='SFVec3f' />
+         <field accessType='outputOnly' name='HipLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='HipRight' type='SFVec3f' />
+         <field accessType='outputOnly' name='KneeLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='KneeRight' type='SFVec3f' />
+         <field accessType='outputOnly' name='ShoulderLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='ShoulderRight' type='SFVec3f' />
+         <field accessType='outputOnly' name='SpineBase' type='SFVec3f' />
+         <field accessType='outputOnly' name='SpineMid' type='SFVec3f' />
+         <field accessType='outputOnly' name='SpineShoulder' type='SFVec3f' />
+         <field accessType='outputOnly' name='WristLeft' type='SFVec3f' />
+         <field accessType='outputOnly' name='WristRight' type='SFVec3f' />
+         
+         <field accessType='outputOnly' name='leftUpperArmSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='rightUpperArmSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='leftLowerArmSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='rightLowerArmSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='neckSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='torsoSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='waistSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='leftUpperLegSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='rightUpperLegSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='leftLowerLegSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='rightLowerLegSpine' type='MFVec3f' />
+
+         <field accessType='outputOnly' name='leftLongFingerSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='rightLongFingerSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='leftShortFingerSpine' type='MFVec3f' />
+         <field accessType='outputOnly' name='rightShortFingerSpine' type='MFVec3f' />
+         <IS>
+        <connect nodeField = 'jointPositions' protoField = 'jointPositions' />
+        <connect nodeField = 'skeleton_changed' protoField = 'skeleton_changed' />
+        </IS>
+
+        <![CDATA[ecmascript:
+
+        function skeleton_changed(value)
+        {
+
+
+        // Tokenize MF types
+
+         SpineBase = jointPositions[0];
+         SpineMid = jointPositions[1];
+         Neck = jointPositions[2];
+         Head = jointPositions[3];
+         ShoulderLeft = jointPositions[4];
+         ElbowLeft = jointPositions[5];
+         WristLeft = jointPositions[6];
+         HandLeft = jointPositions[7];
+         ShoulderRight = jointPositions[8];
+         ElbowRight = jointPositions[9];
+         WristRight = jointPositions[10];
+         HandRight = jointPositions[11];
+         HipLeft = jointPositions[12];
+         KneeLeft = jointPositions[13];
+         AnkleLeft = jointPositions[14];
+         FootLeft = jointPositions[15];
+         HipRight = jointPositions[16];
+         KneeRight = jointPositions[17];
+         AnkleRight = jointPositions[18];
+         FootRight = jointPositions[19];
+         SpineShoulder = jointPositions[20];
+         HandTipLeft = jointPositions[21];
+         ThumbLeft = jointPositions[22];
+         HandTipRight = jointPositions[23];
+         ThumbRight = jointPositions[24];
+
+         // root to the spines of the extrusions
+         
+         leftUpperArmSpine[0] = ElbowLeft;
+         leftUpperArmSpine[1] = ShoulderLeft;
+         rightUpperArmSpine[0] = ElbowRight;
+         rightUpperArmSpine[1] = ShoulderRight;
+         leftLowerArmSpine[0] = ElbowLeft;
+         leftLowerArmSpine[1] = WristLeft;
+         rightLowerArmSpine[0] = ElbowRight;
+         rightLowerArmSpine[1] = WristRight;
+         neckSpine[0] = SpineShoulder;
+         neckSpine[1] = Neck;
+         torsoSpine[0] = SpineMid;
+         torsoSpine[1] = SpineShoulder;
+         waistSpine[0] = SpineBase;
+         waistSpine[1] = SpineMid;
+
+         leftUpperLegSpine[0] = HipLeft;
+         leftUpperLegSpine[1] = KneeLeft;
+         rightUpperLegSpine[0] = HipRight;
+         rightUpperLegSpine[1] = KneeRight;
+         leftLowerLegSpine[0] = KneeLeft;
+         leftLowerLegSpine[1] = AnkleLeft;
+         rightLowerLegSpine[0] = KneeRight;
+         rightLowerLegSpine[1] = AnkleRight;
+
+         leftLongFingerSpine[0] = HandLeft;
+         leftLongFingerSpine[1] = HandTipLeft;
+         rightLongFingerSpine[0] = HandRight;
+         rightLongFingerSpine[1] = HandTipRight;
+         leftShortFingerSpine[0] = HandLeft;
+         leftShortFingerSpine[1] = ThumbLeft;
+         rightShortFingerSpine[0] = HandRight;
+         rightShortFingerSpine[1] = ThumbRight;
+         
+        }
+        
+        // euclidean distance. Not called at the moment
+        function dist(j1,j2)
+        {
+                var dx = j1.x-j2.x;
+                var dy = j1.y-j2.y;
+                var dz = j1.z-j2.z;
+                return Math.sqrt(dx*dx + dy*dy + dz*dz);
+        }
+
+
+         ]]>
+        </Script>
+
+        <ROUTE fromNode='solidSkeletonScript' fromField='AnkleLeft' toNode='leftAnklePos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='AnkleRight' toNode='rightAnklePos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='ElbowLeft' toNode='leftElbowPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='ElbowRight' toNode='rightElbowPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='FootLeft' toNode='leftFootPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='FootRight' toNode='rightFootPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='HandLeft' toNode='leftHandPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='HandRight' toNode='rightHandPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='HandTipLeft' toNode='leftHandTipPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='HandTipRight' toNode='rightHandTipPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='ThumbLeft' toNode='leftThumbPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='ThumbRight' toNode='rightThumbPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='Head' toNode='headPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='Neck' toNode='neckPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='HipLeft' toNode='leftHipPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='HipRight' toNode='rightHipPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='KneeLeft' toNode='leftKneePos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='KneeRight' toNode='rightKneePos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='WristLeft' toNode='leftWristPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='WristRight' toNode='rightWristPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='ShoulderLeft' toNode='leftShoulderPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='ShoulderRight' toNode='rightShoulderPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='SpineBase' toNode='spineBasePos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='SpineMid' toNode='spineMidPos' toField='translation'/>
+        <ROUTE fromNode='solidSkeletonScript' fromField='SpineShoulder' toNode='spineShoulderPos' toField='translation'/>
+
+       <!-- Route to the extrusions to draw limbds -->
+ 
+         <ROUTE fromNode='solidSkeletonScript' fromField='leftUpperArmSpine' toNode='leftUpperArm' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='rightUpperArmSpine' toNode='rightUpperArm' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='leftLowerArmSpine' toNode='leftLowerArm' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='rightLowerArmSpine' toNode='rightLowerArm' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='neckSpine' toNode='neck' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='torsoSpine' toNode='torso' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='waistSpine' toNode='waist' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='leftUpperLegSpine' toNode='leftUpperLeg' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='rightUpperLegSpine' toNode='rightUpperLeg' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='leftLowerLegSpine' toNode='leftLowerLeg' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='rightLowerLegSpine' toNode='rightLowerLeg' toField='spine'/>
+
+       <!-- Route to the extrusions to draw fingers -->
+
+         <ROUTE fromNode='solidSkeletonScript' fromField='leftLongFingerSpine' toNode='leftLongFinger' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='rightLongFingerSpine' toNode='rightLongFinger' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='leftShortFingerSpine' toNode='leftShortFinger' toField='spine'/>
+         <ROUTE fromNode='solidSkeletonScript' fromField='rightShortFingerSpine' toNode='rightShortFinger' toField='spine'/>
+ 
+    
+</ProtoBody>
+</ProtoDeclare>
+
+</X3D>
+
+
+

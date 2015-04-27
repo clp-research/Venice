@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.2//EN" "http://www.web3d.org/specifications/x3d-3.2.dtd">
+<X3D profile='Full' version='3.0' >
+
+
+  <ProtoDeclare name="FaceScript" >
+      <ProtoInterface>
+          <field name='faceBoxTopLeft' type='SFVec2f' accessType='inputOnly' appinfo = "Put something here" />
+<!--      <field name='faceBoxBottomRight' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+          <field name='faceEyeLeft' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+          <field name='faceEyeRight' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+          <field name='faceNose' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+          <field name='faceMouthLeftCorner' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+          <field name='faceMouthRightCorner' type='SFVec2f' accessType='initializeOnly' appinfo = "Put something here" />
+          <field name='faceRotation' type='SFRotation' accessType='initializeOnly' appinfo = "Put something here" />
+          <field name='faceProperties' type='SFString' accessType='initializeOnly' appinfo = "Put something here" />  
+ --> 
+      </ProtoInterface>
+    
+   
+
+    <ProtoBody>
+  
+          <Transform>
+            <Shape>
+              <Text DEF='text1' string='"FaceBoxTopLeft: undef"'/>
+            </Shape>
+          </Transform>
+         
+        
+        <Script DEF='print1' directOutput="True">
+              <field accessType='initializeOnly' name='text1' type='SFNode'>
+                <Text USE='text1'/>
+              </field>
+              <field accessType='inputOnly' name='faceBoxTopLeft' type='SFVec2f'/>
+              <IS>
+                  <connect nodeField = "faceBoxTopLeft" protoField="faceBoxTopLeft" />
+              </IS>
+	
+                <![CDATA[javascript:
+
+                  function faceBoxTopLeft(value) 
+                  {
+                   text1.string[0] = 'FaceBoxTopLeft: ' + value;
+                   fbTopLeft = value;
+                  }
+  
+               ]]>
+          
+            </Script>
+   
+    </ProtoBody>
+
+  </ProtoDeclare>    
+
+</X3D>

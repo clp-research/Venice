@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.2//EN" "http://www.web3d.org/specifications/x3d-3.2.dtd">
+<X3D profile='Full' version='3.0' >
+
+<!-- =========================================================
+			    WINDOWS & VIEWS
+  =================================================================  -->
+
+
+   <Engine>
+    <RenderJob>
+      <WindowGroup>
+        <Window size='1024 768' />
+      </WindowGroup>
+    </RenderJob>
+  </Engine>
+
+<!-- =========================================================
+			  Scene start
+  =================================================================  -->
+
+    <Scene>
+    <!-- Lab Scene -->
+
+     <NavigationInfo transitionType = "TELEPORT" />
+     <Background skyColor='0 0 0'/>
+     	<Viewpoint DEF="default" description="default view" position='0 3 12' />
+
+<!-- =========================================================
+			    Extern Proto declarations
+  =================================================================  -->
+
+<ExternProtoDeclare name="SkeletonScript" url='MF_skeleton_script_kinect_v2.x3d#SkeletonScript'>
+        <field name='skeletonColor' type='SFColor' accessType='initializeOnly' value='0 0 1'
+                appinfo = "The color of the skeleton" />
+        <field name='skeletonBodyTransparency' type='SFFloat' accessType='initializeOnly' value='0.0'
+                appinfo = "Transparency of the skeleton body" />
+        <field name='skeletonHeadTransparency' type='SFFloat' accessType='initializeOnly' value='0.0'
+                appinfo = "Transparency of the skeleton Head" />
+        <field name='drawFullBody' type='SFInt32' accessType='initializeOnly' value='0'
+                appinfo = "Change value to -1 in order to draw only the upper body"  />
+        <field name='limbCrossSection' type='MFVec2f' accessType='initializeOnly' value = "1.00 0.00 0.92 -0.38 0.71 -0.71 0.38 -0.92 0.00 -1.00 -0.38 -0.92 -0.71 -0.71 -0.92 -0.38 -1.00 -0.00 -0.92 0.38 -0.71 0.71 -0.38 0.92 0.00  1.00 0.38 0.92 0.71 0.71 0.92 0.38 1.00 0.00" scale="0.05 0.05" appinfo = "Cross section of limbs" />
+        <field name='jointPositions' type='MFVec3f' accessType='inputOnly'
+                appinfo = "positions of the skeleton joints"    />
+        <field name='skeleton_changed' type='SFInt32' accessType='inputOnly'
+                appinfo = "Trigger node to redraw skeleton" />
+</ExternProtoDeclare>
+
+                                         
+<!-- =========================================================
+			    I/O sensor definitions
+  =================================================================  -->
+
+<IOSensor type='Network' DEF='Network'>
+  <field accessType='outputOnly'  name='*/JointPositions1'  type='MFVec3f'/>
+  <field accessType='outputOnly'  name='*/JointPositions2'  type='MFVec3f'/>
+  <field accessType='outputOnly'  name='*/JointPositions3'  type='MFVec3f'/>
+  <field accessType='outputOnly'  name='*/JointPositions4'  type='MFVec3f'/>
+  <field accessType='outputOnly'  name='*/JointPositions5'  type='MFVec3f'/>
+  <field accessType='outputOnly'  name='*/JointPositions6'  type='MFVec3f'/>
+</IOSensor>
+
+
+<!-- =========================================================
+			dynamic scene geometries
+  =================================================================  -->
+
+<ProtoInstance DEF='skeletonScript1' name='SkeletonScript' containerField='children'>
+		<fieldValue name="skeletonColor" value='0 1 1' />
+		<fieldValue name="skeletonBodyTransparency" value='0' />
+		<fieldValue name="skeletonHeadTransparency" value='0' />
+    <fieldValue name="drawFullBody" value='0' />
+</ProtoInstance>
+
+<ProtoInstance DEF='skeletonScript2' name='SkeletonScript' containerField='children'>
+		<fieldValue name="skeletonColor" value='1 0 0' />
+		<fieldValue name="skeletonBodyTransparency" value='0' />
+		<fieldValue name="skeletonHeadTransparency" value='0' />
+    <fieldValue name="drawFullBody" value='0' />
+</ProtoInstance>
+
+<ProtoInstance DEF='skeletonScript3' name='SkeletonScript' containerField='children'>
+		<fieldValue name="skeletonColor" value='0 1 0' />
+		<fieldValue name="skeletonBodyTransparency" value='0' />
+		<fieldValue name="skeletonHeadTransparency" value='0' />
+    <fieldValue name="drawFullBody" value='0' />
+</ProtoInstance>
+
+<ProtoInstance DEF='skeletonScript4' name='SkeletonScript' containerField='children'>
+		<fieldValue name="skeletonColor" value='0 0 1' />
+		<fieldValue name="skeletonBodyTransparency" value='0' />
+		<fieldValue name="skeletonHeadTransparency" value='0' />
+    <fieldValue name="drawFullBody" value='0' />
+</ProtoInstance>
+
+<ProtoInstance DEF='skeletonScript5' name='SkeletonScript' containerField='children'>
+		<fieldValue name="skeletonColor" value='1 1 0' />
+		<fieldValue name="skeletonBodyTransparency" value='0' />
+		<fieldValue name="skeletonHeadTransparency" value='0' />
+    <fieldValue name="drawFullBody" value='0' />
+</ProtoInstance>
+
+<ProtoInstance DEF='skeletonScript6' name='SkeletonScript' containerField='children'>
+		<fieldValue name="skeletonColor" value='1 0 1' />
+		<fieldValue name="skeletonBodyTransparency" value='0' />
+		<fieldValue name="skeletonHeadTransparency" value='0' />
+    <fieldValue name="drawFullBody" value='0' />
+</ProtoInstance>
+
+      <!-- =========================================================
+			    Splitter Node
+  =================================================================  -->
+
+<Splitter DEF='split1' mode='sorted' enabled='TRUE'/>
+<Splitter DEF='split2' mode='sorted' enabled='TRUE'/>
+<Splitter DEF='split3' mode='sorted' enabled='TRUE'/>
+<Splitter DEF='split4' mode='sorted' enabled='TRUE'/>
+<Splitter DEF='split5' mode='sorted' enabled='TRUE'/>
+<Splitter DEF='split6' mode='sorted' enabled='TRUE'/>
+
+
+<!-- =========================================================
+			    Routes
+  =================================================================  -->
+
+
+<ROUTE fromNode="Network" fromField="*/JointPositions1" toNode="skeletonScript1" toField="jointPositions"/>
+<ROUTE fromNode="Network" fromField="*/JointPositions1" toNode="split1" toField="in"/>
+<ROUTE fromNode="split1" fromField="out" toNode="skeletonScript1" toField="skeleton_changed"/>
+
+<ROUTE fromNode="Network" fromField="*/JointPositions2" toNode="skeletonScript2" toField="jointPositions"/>
+<ROUTE fromNode="Network" fromField="*/JointPositions2" toNode="split2" toField="in"/>
+<ROUTE fromNode="split2" fromField="out" toNode="skeletonScript2" toField="skeleton_changed"/>
+
+<ROUTE fromNode="Network" fromField="*/JointPositions3" toNode="skeletonScript3" toField="jointPositions"/>
+<ROUTE fromNode="Network" fromField="*/JointPositions3" toNode="split3" toField="in"/>
+<ROUTE fromNode="split3" fromField="out" toNode="skeletonScript3" toField="skeleton_changed"/>
+
+<ROUTE fromNode="Network" fromField="*/JointPositions4" toNode="skeletonScript4" toField="jointPositions"/>
+<ROUTE fromNode="Network" fromField="*/JointPositions4" toNode="split4" toField="in"/>
+<ROUTE fromNode="split4" fromField="out" toNode="skeletonScript4" toField="skeleton_changed"/>
+
+<ROUTE fromNode="Network" fromField="*/JointPositions5" toNode="skeletonScript5" toField="jointPositions"/>
+<ROUTE fromNode="Network" fromField="*/JointPositions5" toNode="split5" toField="in"/>
+<ROUTE fromNode="split5" fromField="out" toNode="skeletonScript5" toField="skeleton_changed"/>
+
+<ROUTE fromNode="Network" fromField="*/JointPositions6" toNode="skeletonScript6" toField="jointPositions"/>
+<ROUTE fromNode="Network" fromField="*/JointPositions6" toNode="split6" toField="in"/>
+<ROUTE fromNode="split6" fromField="out" toNode="skeletonScript6" toField="skeleton_changed"/>
+
+    </Scene>
+</X3D>

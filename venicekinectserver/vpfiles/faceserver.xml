@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<Sources>
+<Sensor name="Venice">
+  <Namespace name="Kinect">
+    <slot name="FaceBoxTopLeft" type="MFVec2f"/>
+    <slot name="FaceBoxBottomRight" type="MFVec2f"/>
+    <slot name="FaceEyeLeft" type="MFVec2f"/>
+    <slot name="FaceEyeRight" type="MFVec2f"/>
+    <slot name="FaceNose" type="MFVec2f"/>
+    <slot name="FaceMouthLeftCorner" type="MFVec2f"/>
+    <slot name="FaceMouthRightCorner" type="MFVec2f"/>
+    <slot name="FaceRotation" type="MFRotation"/>
+    <slot name="FaceProperties" type="MFString"/>
+    <!-- FaceProperties (String of 8 characters):
+           Char 0: Happy
+           Char 1: Engaged
+           Char 2: Glasses
+           Char 3: LeftEyeClosed
+           Char 4: RightEyeClosed
+           Char 5: MoutOpen
+           Char 6: MouthMoved
+           Char 7: LookingAway 
+         Values of the Property chars:
+           0: unknown
+           1: no
+           2: maybe
+           3: yes
+    -->
+  </Namespace>
+</Sensor>
+</Sources>
