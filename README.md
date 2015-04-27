@@ -27,3 +27,29 @@ Copyright (c) 2015 Dialogue Systems Group, University of Bielefeld.
     * a modification for ELAN to send synchronization commands to VeniceHub
     * connects via Remote Procedure Call to VeniceHub
     * synchronizes replay of data by sending VeniceHub search commands
+
+## Quick Usage Example
+
+A very quick example, in which VeniceHub logs some input from the InstantIO toyserver to a log file.
+
+As a preparation copy 'instantreality.jar' (e.g. from your InstantPlayer installation) to 'ToyServer/BasicServerIIOJava' and to 'VeniceHub/exported_jar/VeniceHub_lib'.
+
+Open a console and change directory to ToyServer/BasicServerIIOJava. On Windows start the BasicServer with
+
+    > java -cp .;* BasicServer
+
+or on linux or mac start the BasicServer with
+
+    > java -cp .:* BasicServer
+
+Open another console and change directory to VeniceHub/exported_jar, then start VeniceHub with
+
+    > java -jar VeniceHub.jar
+
+In this example VeniceHub uses the default settings (input from InstantIO and output to file log.xio.gz).
+
+Go back to the console of the BasicServer and type some lines of text.
+
+Quit both programs by entering 'q' in each console.
+
+Unzip the 'log.xio.gz' (or 'log_xxx.xio.gz' if this was not the first run) and open it with an editor and see the log.
