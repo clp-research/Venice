@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="lib/jaxp-ri-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="lib/protobuf-java-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/rsb-0.10.0.jar"/>
+	<classpathentry kind="lib" path="lib/msgpack-rpc-0.7.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.6.6.jar"/>
+	<classpathentry kind="lib" path="lib/msgpack-0.6.7.jar"/>
+	<classpathentry kind="lib" path="lib/javassist.jar"/>
+	<classpathentry kind="lib" path="lib/netty-3.5.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-1.6.6.jar"/>
+	<classpathentry kind="lib" path="lib/jcommander-1.19.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/instantreality.jar"/>
+	<classpathentry kind="lib" path="lib/venicelib.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

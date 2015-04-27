@@ -1,0 +1,8 @@
+package protobuf;
+
+option java_package = "protobuf";
+option java_outer_classname = "Int32Protos";
+
+message Int32 {
+  optional int32 value = 1;
+}

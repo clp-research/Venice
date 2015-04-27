@@ -1,0 +1,8 @@
+package protobuf;
+
+option java_package = "protobuf";
+option java_outer_classname = "BoolProtos";
+
+message Bool {
+  optional bool value = 1;
+}

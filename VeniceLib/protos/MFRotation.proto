@@ -1,0 +1,11 @@
+package protobuf;
+
+option java_package = "protobuf";
+option java_outer_classname = "MFRotationProtos";
+
+message MFRotation {
+  repeated float q1 = 1 [packed=true];
+  repeated float q2 = 2 [packed=true];
+  repeated float q3 = 3 [packed=true];
+  repeated float q4 = 4 [packed=true];
+}

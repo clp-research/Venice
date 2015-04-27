@@ -1,0 +1,10 @@
+package protobuf;
+
+option java_package = "protobuf";
+option java_outer_classname = "MFVec3fProtos";
+
+message MFVec3f {
+  repeated float x = 1 [packed=true];
+  repeated float y = 2 [packed=true];
+  repeated float z = 3 [packed=true];
+}

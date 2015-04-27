@@ -1,0 +1,836 @@
+\documentclass[german,a4paper]{article}
+\pagestyle{headings}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage{ngerman}
+\usepackage[pdftex]{graphics}
+\usepackage{graphicx} 
+\usepackage[pdftex]{thumbpdf}
+\usepackage{listings}
+\lstset{
+  language=[LaTeX]TeX,
+  basicstyle=\ttfamily,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\usepackage[margin=3cm]{geometry}
+
+\usepackage[
+        pdftex,
+        a4paper,
+        bookmarks,
+        bookmarksopen=true,
+        bookmarksnumbered=true,
+        pdfauthor={Oliver Eickmeyer},
+        pdftitle={VeniceHub Manual},
+        colorlinks,
+        linkcolor=black,
+        urlcolor=blue,
+        citecolor=black
+]{hyperref}
+
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage[font=small,position=bottom,skip=0cm]{caption}
+\usepackage{mathpazo}
+\usepackage{floatflt}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Eigentliches Dokument
+
+\begin{document}
+
+                                % titelseite! 
+                                % wurde mit eigener formatierung
+                                % erzeugt, kann aber auch mit
+                                % ``maketitle'' erzeugt werden
+
+\begin{titlepage}
+\vspace*{5cm}  
+\begin{center}
+{\LARGE\bfseries VeniceHub}\\[1.0ex]
+{\Large Manual\\[1.0ex]
+\today
+}
+\end{center}
+
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Inhaltsverzeichnis
+
+\tableofcontents
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+VeniceHub is a platform independent software that connects different sources of sensor data. It receives and sends sensor data via network, can log data to a log file on disk and replay it in the same timescale it was recorded. When replaying logged sensor data, VeniceHub can receive remote commands to play, pause and seek specific time positions.\\
+The supported network protocols are InstantIO and RSB and for (de)compression of logged data GZIP is used.\\
+
+\subsection{Special characters in this manual}
+In this manual the square brackets "\texttt{[}" and "\texttt{]}" are used to mark optional parameters, optional arguments and optional content.\\
+Curly brackets "\texttt{\{}" and "\texttt{\}}" are used to mark placeholders.
+
+\section{Installation}
+Download the release version and copy the content into a directory of your choice.
+
+To run VeniceHub, java (1.7 or higher) needs to be installed.
+
+To use InstantReality with VeniceHub, get \texttt{instantreality.jar} from www.instantreality.org and copy it into the subfolder VeniceHub\_lib.
+
+To use Robotic Service Bus (RSB) (including Google Protocol Buffers) two java jars are necessary:\\
+\texttt{rsb-0.10.0.jar} (or higher) from\\
+\url{http://docs.cor-lab.org/rsb-manual/trunk/html/install-binary.html\#pre-compiled-jar-download}
+and\\
+\texttt{protobuf-java-2.4.1.jar} (or higher) from\\
+\url{http://mvnrepository.com/artifact/com.google.protobuf/protobuf-java}
+
+
+\section{Usage}
+
+\subsection{Start and quit VeniceHub}
+The command to start VeniceHub is:
+\begin{lstlisting}
+java -jar VeniceHub.jar [{options}]
+\end{lstlisting}
+On some operation systems (e.g. Linux) there may be a problem with multicast connection, see section \ref{sec:mc_prob} (page \pageref{sec:mc_prob}) for more information.\\
+Without options, VeniceHub will operate in default mode with default values. The default mode is Logging data from InstantIO to a file named \texttt{log.xio.gz}\footnote{If this file already exists, the name will be changed, see section \ref{sec:target_DISK}}.\\
+To quit VeniceHub, enter \texttt{q}.
+
+\subsection{Using options}
+Options can be given in two ways: By command line arguments or by file. For example the option to give a filename is \texttt{-\--file \{filename\}}. For some options exists a short form. For example the short form for \texttt{-\--file} is \texttt{-f}. To see all possible options, use the \texttt{-\--help} option (short \texttt{-h}).\\
+
+To give the option by file, name the file with an $@$, for example:
+\begin{lstlisting}
+java -jar VeniceHub.jar @myOptions.txt
+\end{lstlisting}
+Then the file \texttt{myOptions.txt} can contain options like this:
+\begin{lstlisting}
+--input
+Disk
+
+--output
+IIO
+
+--file
+mylogfile.log
+\end{lstlisting}
+
+It is possible to mix both methods. For example:
+\begin{lstlisting}
+java -jar VeniceHub.jar @myOptions.txt -s sensor.xml
+\end{lstlisting}
+It is not allowed to specify an option more than once.\\
+
+\subsection{Mode of operation}
+VeniceHub knows different modes of operation, depending on input source and output target. The default mode is logging data from InstantIO to Disk. The mode is set by using the options \texttt{-\--input} and \texttt{-\--output}, or short \texttt{-i} and \texttt{-o}. The parameters for those options are shown in table \ref{tab_modes}.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lll}
+input       &  output  & remark \\
+\hline
+Disk  & IIO  & replaying from disk to InstantIO \\
+Disk  & RSB   & replaying from disk to RSB\\
+IIO  & Disk    & logging from InstantIO to disk (default mode) \\
+IIO   & RSB   & receiving from InstantIO, converting and sending to RSB\\
+RSB   & Disk  & logging from RSB to disk\\
+RSB   &  IIO  & receiving from RSB, converting and sending to InstantIO\\
+VP & IIO & receiving from TCP port and sending to InstantIO\\
+VP & RSB & receiving from TCP port and sending to RSB\\
+VP & Disk & receiving from TCP port and logging to disk
+\end{tabular}
+\caption{Modes of operation}
+\label{tab_modes}
+\end{table} 
+
+\subsection{Logging data to disk}
+\label{sec:target_DISK}
+By default VeniceHub will log incoming data from InstantIO to disk. Starting VeniceHub in default mode does not require any options:
+\begin{lstlisting}
+java -jar VeniceHub.jar
+\end{lstlisting}
+The default name of the log file is \texttt{log.xio.gz}. With the option \texttt{-\--file \{filename\}} the filename can be changed. If a file with this name already exists, an index will be added to the filename. If this new filename also exists, the index will be increased until there is no existing file with this name.\\
+The data from network will be converted into a string of the format of a XIO line, see section \ref{sec:XIO_lines} for more information about XIO lines used by VeniceHub.
+
+The data will be compressed using GZIP (so it is recommended to use the suffix \texttt{.gz} for the file name). With the \texttt{-\--writeRaw} option the data will be written without compression.
+
+By default, VeniceHub will log everything received over InstantIO. To select specific sensor fields from InstantIO namespace or RSB scope, a sensor definition file is required, see section \ref{sec:sensorfile}.
+
+\subsection{Replaying data from file}
+When replaying from disk, VeniceHub will parse the content of the file and send the data into network.\\
+For example
+\begin{lstlisting}
+java -jar VeniceHub.jar -i Disk -o IIO -f mylog.xio.gz
+\end{lstlisting}
+will replay the data in \texttt{mylog.xio.gz} into InstantIO network.\\
+The file can be compressed using GZIP and has to contain XIO lines, see section \ref{sec:XIO_lines}. The name of the file has to be defined with the \texttt{-\--file} option (or \texttt{-f}), otherwise the default will be used (\texttt{log.xio.gz}).\\
+The sensorname values of the XIO lines will be used as scopes (to create namespace and slotlabel), so for example, for the XIO line to be replayed via InstantIO
+\begin{lstlisting}
+<sfint32 value="1.234" timestamp="1390123456789" sensorname="sim/car/velocity"/>
+\end{lstlisting}
+VeniceHub will create a slot labeled with \texttt{velocity} and the namespace \texttt{sim/car} (assuming that no prefix for namespaces was given).\\
+
+
+\subsection{Receiving data from InstantIO}
+To receive data from InstantIO network, multicast needs to be enabled and the multicast options \texttt{-\--mcadress}, \texttt{-\--mcport} and \texttt{-\--mcttl} are relevant. The default settings are:
+\begin{lstlisting}
+--mcadress 224.21.12.68
+--mcport 4711
+--mcttl 0
+\end{lstlisting}
+VeniceHub will create a network node and a listener to each slot it detects. Data is then received from every slot. Be sure to increase the TTL (Time-To-Live), if a connection with one ore more routers is used (each router will reduce the TTL for a datagram and if it reaches 0 it will be discarded).
+
+\subsection{Sending data to InstantIO}
+Sending data to InstantIO is possible in two ways.
+
+The first way is using dynamic slot creation (default). For each data item a corresponding slot is created `on the fly`, if a slot with that name is not already existing. The name of the slot will be derived from the sensorname of the data item. InstantIO needs some time to initialize new slots and will silently ignore data being send to those slots while initializing.
+
+The second way is to predefine slots with a sensor file (see section \ref{sec:sensorfile} for more information about sensor files). A data item will only be send to InstantIO, if its sensorname matches a given namespace and slot name.
+
+The data item is then converted into a instantreality data object of the corresponding type and send to the matching slot. Not all data types are supported by the Java implementation of InstantIO, see section \ref{sec:types} for more information about supported data types.
+
+\subsection{RSB receiving and sending}
+To use RSB with other data types than Strings, protobuf definitions of those types are necessary. The folder with the protobuf class files is given by the option \texttt{-\--protobuf \{path\}}. The default setting for protobuf classes is \texttt{-\--protobuf ./protobuf}, so if this option is not given by the command line arguments, VeniceHub will search the current directory for a folder named protobuf and will use this, if found. See section \ref{sec:protobuf} for more information on how to use protobuf classes with RSB.\\
+The default scope for sending can be given with the option \texttt{-\--rsbDefInfScope}.\\
+
+It is possible to use RSB without protobuf classes, but then only string objects are supported. Two options can help here: With the option \texttt{-\--rsbStringsAreXIO} VeniceHub will parse received String objects as XIO lines. With the option \texttt{-\--rsbtoXIO} VeniceHub will send complete XIO lines as Strings via RSB. But this is only a workaround for the case that protobuf class files are not available.\\
+
+It is also possible to use predefined scopes, by giving a sensor file (see section \ref{sec:sensorfile} for more information about sensor files). A data item will only be send or received via RSB if it's sensorname matches a given scope and informer name.
+
+The easiest way is to use default values for all RSB options.
+
+Example for logging from RSB to Disk:
+\begin{lstlisting}
+    java -jar VeniceHub -i RSB -o Disk
+\end{lstlisting}
+VeniceHub will then assume that the current directory contains a protobuf folder and a file named xiocodes\_RSB.xml (both are already included in the release version).
+
+Example for translating from IIO to RSB:
+\begin{lstlisting}
+    java -jar VeniceHub -i IIO -o RSB
+\end{lstlisting}
+VeniceHub will then assume that the current directory contains a protobuf folder, a file named xiocodes\_RSB.xml and a file named match.xml (all three are already included in the release version).
+
+
+\subsection{VenicePort (VP) - Connection to TCP socket}
+In VP mode, VeniceHub reads from a TCP socket. VP mode is only accepted as input. Needed options are:
+\begin{lstlisting}
+--vpport {port number}
+--vpfile {name of XML file with slot definitions}
+\end{lstlisting}
+With \texttt{-\--vpport} the TCP port is given. The reader thread of VeniceHub will wait until a client connects to this port and then starts to parse the incoming strings. For the parsing a XML file is needed, which defines the structure of the string. This XML file is given by \texttt{-\--vpfile}, or short \texttt{-v}.\\
+see section \ref{sec:VPstring} for more information how the format of the string is defined.
+
+\subsection{More options}
+To see all options, use \texttt{--help} or \texttt{-h}. In table \ref{tab_someopt} some option are listed.\\
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{ll}
+Option       &  Explanation\\
+\hline
+\texttt{-\--headerlines \{n\}} & number of headerlines to ignore (default 2)\\
+\texttt{-\--rpcServerAdress \{adress\}} & adress for RPC (default localhost)\\
+\texttt{-\--rpcServerPort \{port\}} & port for RPC (default 4243)\\
+\texttt{-\--offset \{ms\}}  & Setting offset for synchronization of replay with ELAN  \\
+\texttt{-\--slotfile \{filename\}} & Giving a XML file with predefined slots\\
+\texttt{-\--sendInitValue}  & activate sending of initialization values for predefined IIO out-slots  \\
+\texttt{-\--mcadress \{adress\}} & adress for multicast \\
+\texttt{-\--mcport \{port\}} & port for multicast \\
+\texttt{-\--mcttl \{n\}} & time to live for multicast (default 2)\\
+\texttt{-\--parser \{n\}} & which parser to use (DOM or REGEX) (default REGEX)\\
+\texttt{-\--rsbDefInfScope \{scope\}} & sets default scope for RSB (default /)\\
+\texttt{-\--classMatcher \{filename\}} & Giving a XML file with class matching definitions for RSB\\
+\texttt{-\--protobuf \{path\}} & path for protobuf files for RSB types\\
+\texttt{-\--queueCapacity \{events\}} & set queue size for event queue (default 10000)\\
+\texttt{-\--bufferCapacity \{lines\}} & set disk reader buffer capacity (default 1000000)\\
+\texttt{-\--writeRaw} & writes data to file without compression\\
+\end{tabular}
+\caption{Some options}
+\label{tab_someopt}
+\end{table} 
+
+\section{XIO lines}
+\label{sec:XIO_lines}
+
+\subsection{General Syntax}
+To log data, VeniceHub converts the data from each sensor into a XIO line and writes it into the log file. When replaying data from a log file, VeniceHub trys to parse the content of the file as XIO lines.\\
+XIO lines have to be in the following format:
+\begin{lstlisting}
+<{type} value="..." timestamp="..." sensorname="..."/>
+\end{lstlisting}
+The \texttt{\{type\}} above will be replaced by the data type of the sensor, see section \ref{sec:types} for more information about supported data types. If the data type of the sensor is not supported, the default type \texttt{sfstring} will be used.\\
+If a change to the default mapping between data types and XIO codes is needed, see section \ref{sec:xiocodes} for more information.\\
+The \texttt{timestamp} will be the current system time in milliseconds. The \texttt{sensorname} will be the complete scope of the sensor, consting of a slotlabel and an optional namespace, separated by slahes (in the format namespace/slotlabel).\\
+An example for a XIO line:
+\begin{lstlisting}
+<sffloat value="42.15" timestamp="1391234567890" sensorname="sim/car/speed"/>
+\end{lstlisting}
+The value may not contain the special characters for new line or carriage return. The sensorname (=scope) consists of the namespace \texttt{sim/car} and the slotlabel \texttt{speed}.
+
+Additional to the above mentioned syntax, there is an older format, also supported, but deprecated:
+\begin{lstlisting}
+<irio:{type} value="..." timestamp="..." sensorname="..."></irio:{type}>
+\end{lstlisting}
+
+\emph{Note}: The regular expression matching parser (RegEx) that VeniceHub uses by default, may get confused by minor changes of this syntax, although those changes my be XML-conform.
+
+\subsection{Parsing of special types}
+While simple types (sfstring, sffloat, sfint32, sfdouble, sfboolean) are parsed in an obvious way, the parsing of more complex types is explained in this subsection.\\
+\\
+\texttt{sfec2f, sfvec3f, sfrotation}: Those one-dimensional multi-element types are converted into a string element by element. Those strings are concatenated with one space as a delimiter. For example a \texttt{sfvec3f} with the value of \texttt{0.1, 0.2, 0.3} becomes:
+\begin{lstlisting}
+<sfvec3f value="0.1 0.2 0.3" timestamp="..." sensorname="..."/>
+\end{lstlisting}
+
+Multi fields: Multi field types are first disassembled field by field. Each field is converted into a string. Then all strings are concatenated with exactly one comma and one space as a delimiter. Additionally an opening square bracket is put in front of the resulting string and a closing square bracket is put at the end of the resulting string. For example a mfint32 consisting of four integers with the values \texttt{1, 3, 5, 7} is converted to:
+\begin{lstlisting}
+<mfint32 value="[1, 3, 5, 7]" timestamp="..." sensorname="..."/>
+\end{lstlisting}
+A multi field version of a multi-element type will first be disassembled field by field and then each field will be converted into a string according the appropriate rules. For example, a mfvec2f consisting of three vectors with the values \texttt{1.1, 1.2} and \texttt{2.1, 2.2} and \texttt{3.1, 3.2} will be converted to:
+\begin{lstlisting}
+<mfint32 value="[1.1 1.2, 2.1 2.2, 3.1 3.2]" timestamp="..." sensorname="..."/>
+\end{lstlisting}
+Please note that the fields are delimited by one comma and one space, while the elements \emph{inside} a field are delimited by one space.
+
+\section{Fileformat for VeniceHub log files}
+The file format:
+\begin{lstlisting}
+...some header lines...
+<venice>
+...XIO lines...
+</venice>
+\end{lstlisting}
+Usually the filename ending is \texttt{.xio}. The file may be compressed with gzip, then the filename ending is usually \texttt{.xio.gz}.
+
+The XIO lines in the file must be terminated by an end-of-line character. They can not include an end-of-line character (for example an EOF in the value of an sfstring will break the parsing).
+
+The number of header lines to be ignored are by default 2 and can be changed with the option \texttt{-\--headerlines}.
+
+By default VeniceHub compresses data written to disk with gzip. To write uncompressed data, use the option \texttt{-\--writeRaw}.
+
+\section{Supported data types}
+\label{sec:types}
+
+Data types supported by VeniceHub for InstantIO and disk are shown in table \ref{tab_datatypes}. Only a few non-instantreality types are supported by the Java implementation of InstantIO and not all of them are supported as multi fields. For now not all of the instantreality types are supported by VeniceHub, only those, we used in preceding experiments (mostly Vec2f, Vec3f and Rotation).
+\begin{table}[htbp]
+\centering
+\begin{tabular}{llll}
+Type       &  single field & multi field & remark\\
+\hline
+Boolean  & sfbool  & - & \\
+String   & sfstring & mfstring & should not contain new lines, nor carriage return \\
+Integer  & sfint32 & -  & \\
+Float    & sffloat & -  & \\
+Double   & sfdouble & -  & \\
+Vec2f    & sfvec2f & mfvec2f & \\
+Vec3f    & sfvec3f & mfvec3f & \\
+Rotation & sfrotation & mfrotation & \\
+\end{tabular}
+\caption{Supported datatypes}
+\label{tab_datatypes}
+\end{table} 
+
+The Java implementation of InstantIO will silently ignore unsupported data types.
+
+For RSB all protobuf classes in the protobuf folder are supported.
+
+The mapping what XIO code belongs to what type can be changed with the option \texttt{-\--xiocodes \{filename\}}. For InstantIO there are default values for all supported types. But for RSB there is only \texttt{sfstring} by default, so naming this mapping file is mandatory if more datatypes than strings are needed. See section \ref{sec:xiocodes} for more information.
+
+\section{XIO codes}
+\label{sec:xiocodes}
+
+For InstantIO by default the XIO code \texttt{sfstring} is used for string objects, \texttt{sffloat} for floating point values, and so on. If this mapping needs to by changed, or if RSB protobuf classes are used, the option \texttt{-\--xiocodes \{filename\}} is necessary. With this option a file is named, that contains a XML structure with definitions on how to map types to XIO codes. A file that would map some supported types of InstantIO to the default XIO codes would look like this:
+\begin{lstlisting}
+<?xml version="1.0"?>
+<codes>
+<def class="java.lang.String" code="sfstring"/>
+<def class="[Ljava.lang.String;" code="mfstring"/>
+<def class="java.lang.Float" code="sffloat"/>
+<def class="[Ljava.lang.Float;" code="mffloat"/>
+<def class="org.instantreality.InstantIO.Vec3f" code="sfvec3f"/>
+<def class="[Lorg.instantreality.InstantIO.Vec3f;" code="mfvec3f"/>
+...
+</codes>
+\end{lstlisting}
+
+For RSB protobuf classes it can look like this:
+
+\begin{lstlisting}
+<?xml version="1.0"?>
+<codes clear="true">
+<def class="protobuf.Int32Protos$Int32" code="sfint32"/>
+<def class="protobuf.BoolProtos$Bool" code="sfbool"/>
+<def class="protobuf.FloatProtos$Float" code="sffloat"/>
+<def class="protobuf.MFFloatProtos$MFFloat" code="mffloat"/>
+<def class="protobuf.Vec2fProtos$Vec2f" code="sfvec2f"/>
+<def class="protobuf.MFVec2fProtos$MFVec2f" code="mfvec2f"/>
+<def class="protobuf.Vec3fProtos$Vec3f" code="sfvec3f"/>
+<def class="protobuf.MFVec3fProtos$MFVec3f" code="mfvec3f"/>
+<def class="protobuf.RotationProtos$Rotation" code="sfrotation"/>
+<def class="protobuf.MFRotationProtos$MFRotation" code="mfrotation"/>
+<def class="protobuf.MFStringProtos$MFString" code="mfstring"/>
+</codes>
+\end{lstlisting}
+
+Mind the different handling of multifields in InstantIO and RSB. InstantIO uses Java arrays of the corresponding singlefield, while RSB uses dedicated multifield versions. So for InstantIO the multifields are named \texttt{[L\{singlefield name\};}, putting a square bracket and an L in front of the singlefield and appending a semicolon.
+
+\section{Slot file}
+\label{sec:sensorfile}
+
+A slot file (also called "sensor file") is a XML document with definitions to select specific sensor fields (slots) from the source. The option to name this file is \texttt{-\--slotfile}, or short \texttt{-s}:
+\begin{lstlisting}
+--slotfile sensor.xml
+\end{lstlisting}
+The use of a slotfile tells VeniceHub to switch from dynamic slot creation to predefined slot creation.\\
+Example for a slotfile:
+\begin{lstlisting}
+<Venice>
+    <simulator>
+        <status type="sfstring"/>
+        <car>
+          <position type="sfvec3f"/>
+          <velocity type="sfvec3f"/>
+        </car>
+    </simulator>
+    <participant>
+        <gaze type="sfvec3f"/>
+        <expression type="mffloat"/>
+    </participant>
+</Venice>
+\end{lstlisting}
+In the above example VeniceHub will create the slots
+\begin{lstlisting}
+simulator/status (sfstring)
+simulator/car/position (sfvec3f)
+simulator/car/velocity (sfvec3f)
+participant/gaze (sfvec3f)
+participant/expression (mffloat)
+\end{lstlisting}
+
+The first element (in the example named \texttt{Venice}, but can have any name) is the unique root element of the XML document, so it has to contain all other elements, according to the definition of a well-formed XML document. This root element contains now all elements for namespaces and slots. If an element has a \texttt{type} attribute, it will be parsed as a sensor slot of that type. If an element do not contain the \texttt{type} attribute, it will be parsed as a part of the namespace. The name of the element is used as the namespace and the slotlabel respectively.\\
+Optionally it is possible to use the \texttt{name} attribute; in that case VeniceHub will use the value of the \texttt{name} attribute for namespaces and slotnames.\\
+The next example defines the same slots as the first example, but uses a more verbose syntax (as in older versions of VeniceHub and VeniceIPC):
+\begin{lstlisting}
+<Sources>
+    <Sensor name="simulator">
+        <Slot name="status" type="sfstring"/>
+        <Namespace name="car">
+            <Slot name="position" type="sfvec3f"/>
+            <Slot name="velocity" type="sfvec3f"/>
+        </Namespace>
+    </Sensor>
+    <Sensor name="participant">
+        <Slot name="gaze" type="sfvec3f"/>
+        <Slot name="expression" type="mffloat"/>
+    </Sensor>
+</Sources>
+\end{lstlisting}
+
+\section{Format for VP strings}
+\label{sec:VPstring}
+In VP mode VeniceHub receives via TCP socket strings that have to be in a format that is defined by a XML file (\texttt{-\--vpfile \{filename\}}). This XML file uses the same conventions as the XML file for predefining slots.\\
+The fields have to be separated by a comma and a space. The first value has to be the checksum (Adler32). The string has to end with a newline character.\\
+Multifields: A multifield has to start with an integer, which indicates the number of fields belonging to the multifield. The subfields in a multifield have also to be separated with a comma and a space.\\
+Example: A MFVec2f with 3 fields has to be formated like:
+\begin{lstlisting}
+  3, 0.11, 0.12, 0.21, 0.22, 0.31, 0.32
+\end{lstlisting}
+It is possible to have arrays with zero fields.\\
+Selfexplaning Example:
+\begin{lstlisting}
+  <Venice>
+    <experiment>
+      <data>
+        <frameNumber type = "SFInt32"/>
+        <headConfidence type = "SFFloat"/>
+        <position type = "SFVec3f"/>
+        <rotation type = "SFRotation"/>
+        <title type = "SFString"/>
+        <switchA type = "SFBool"/>
+        <objectnames type = "MFString"/>
+      </data>
+    </experiment>
+  </Venice>
+\end{lstlisting}
+
+A received string can look like this:
+\begin{lstlisting}
+	1868306011, 12, 0.1, 102.0, 100.3, 144.04, 0.1, 0.2, 0.3, 0.4, Test, true, 2, Box, Sphere\n
+\end{lstlisting}
+Remember that the first value is the ckecksum.\\
+
+It is allowed to use namespaces. Just concatenate the fields, as if there where no namespaces. Only the order is important.\\
+Example:
+\begin{lstlisting}
+  <Venice>
+    <sensor1>
+      <position type = "SFVec3f"/>
+      <frame type = "sfint32"/>
+    </sensor1>
+    <sensor2>
+      <shape type = "sfstring"/>
+    </sensor2>
+  </Venice>
+\end{lstlisting}
+And a resulting string:
+\begin{lstlisting}
+      942212455, 0.1, 0.2, 0.3, 45, Circle
+\end{lstlisting}
+The fields of the two namespaces \texttt{sensor1} and \texttt{sensor2} are just concatenated.
+
+\section{Protobuf Classes}
+\label{sec:protobuf}
+This section describes the use of protobuf classes with RSB. First the path to the folder with the protobuf classes is needed. The relevant option is\\
+\texttt{-\--protobuf \{folderpath\}}.\\
+Then VeniceHub needs to know what XIO code belongs refers to what protobuf class. This is done with the option\\
+\texttt{-\--xiocodes \{filename\}}\\
+See section \ref{sec:xiocodes} how to create such a file.\\
+This is sufficient for the tasks of:
+\begin{itemize}
+  \item reading from disk and sending to RSB
+  \item receiving from RSB and writing to disk
+\end{itemize}
+
+But if a conversion from InstantIO to RSB or vice versa is needed, then a third step is needed: A XML file that defines what InstantIO type maps to what RSB protobuf type. This file is given with the option \texttt{-\--classMatcher \{filename\}}. This takes a bit more work, see section \ref{sec:matching} for more information.\\
+
+\subsection{How to create a custom RSB protobuf class file}
+See the proto files that are included.  They are located in the protos folder of venice.lib.  They should have the following structure:
+\begin{lstlisting}
+    package protobuf;
+    option java_package = "protobuf";
+    option java_outer_classname = "XXXProtos";
+    message XXX {
+      // your values
+    }
+\end{lstlisting}
+Where XXX is the name of your class.  The name of the file has to be XXX.proto.\\
+
+Example for single field boolean:
+\begin{lstlisting}
+    package protobuf;
+    option java_package = "protobuf";
+    option java_outer_classname = "BoolProtos";
+    message Bool {
+      optional bool value = 1;
+    }
+\end{lstlisting}
+
+Note: The assigned value is not an actual value, but an index (starting with 1).  See google protocol buffers documentation for more information.\\
+
+Example for multifield float:
+\begin{lstlisting}
+    package protobuf;
+    option java_package = "protobuf";
+    option java_outer_classname = "MFFloatProtos";
+    message MFFloat {
+      repeated float value = 1 [packed=true];
+    }
+\end{lstlisting}
+
+Create a folder named \texttt{protobuf} and copy your proto files one level above.\\
+
+Example:
+\begin{lstlisting}
+    create folder /myApplication/defs/protobuf
+    copy your proto files to /myApplication/defs/
+\end{lstlisting}
+
+Compile each proto file with protoc (get it from google and copy it in the folder where the proto files are located).  The protobuf jar (e.g. protobuf-java-2.4.1.jar) has to be in that folder, too.
+\begin{lstlisting}
+    > protoc --java_out=. XXX.proto
+\end{lstlisting}
+This creates a XXXProtos.java in the protobuf folder.  This source file can already be used in your source code.  But for the use with venice.lib, further compiling is necessary.
+
+Change directory to the protobuf folder, which should now contain the above mentioned java files created by protoc.  Type the following command:
+\begin{lstlisting}
+    > javac -cp .;..\protobuf-java-2.4.1.jar XXXProtos.java
+\end{lstlisting}
+This creates all class files.  venice.lib should recognize them now.
+
+\section{Class matching between RSB and InstantIO}
+\label{sec:matching}
+
+What is matching good for? An protobuf class object, received by RSB, needs to be converted into an IIO class object. For example, if you have created a class called \texttt{protobuf.Vec3fProtos.Vec3f} as an counterpart to the \texttt{Vec3f} of InstantIO, it is necessary to tell venice.lib, how it can transfer the values.
+ 
+This is done by XML file.  See match.xml in the venice.lib main directory as an example.  The structure is the following:
+\begin{lstlisting}
+    <matches>
+      <match from="..." to="...">
+        ...
+      </match>
+    </matches>
+\end{lstlisting}
+The "from" attribute and the "to" attribute in the "match" element are defining what source class is matched to what target class.  This has to be done for each of the two directions.  In case of matching RSB and IIO, the relation between the two cases is NOT symmetric.\\
+
+\subsection{Example Float}
+
+You have created an protobuf class named MyFloat, which contains a single float value.  You want to match it to the java native Float (java.lang.Float), because Floats can be send over InstantIO out-slots.
+\begin{lstlisting}
+    <match from="protobuf.MyFloatProtos.MyFloat" to="java.lang.Float">
+      <constructor parameter="float"/>
+      <getter name="getValue"/>
+    </match>
+\end{lstlisting}
+The constuctor element tells venice.lib, that the target class can be contructed with a public constructor.  venice.lib assumes, that the constructor has the same name as the target class (according to java rules).  It also tells, that this constructor takes one parameter of the primitive type float.
+
+The getter element tells venice.lib, that the float value of the protobuf class can be retrieved with the method getValue().
+
+The other direction don't work this way, because there are no public constructors for protobuf classes.  Instead there are builders.  venice.lib will automatically use builders, if the target class is a protobuf class.  In this case a <methodpair> element is needed:
+\begin{lstlisting}
+    <match from="java.lang.Float" to="protobuf.MyFloatProtos.MyFloat">
+      <methodpair getter="floatValue" setter="setValue" type="float"/>
+    </match>
+\end{lstlisting}
+The getter attribute tells venice.lib how to get the value from the Float.  The setter attribute tells venice.lib how to set the value for your target class.  venice.lib will then instanciate the builder class for this protobuf class, call the setter method and then commands the builder to build the instance.\\
+
+
+\subsection{Example for multifield classes}
+
+Let's say, your protobuf class from the last example is now a multifield, so it can store multiple float values.  It is not possible to just take the singlefield class and make an array out of it, like you would do with java.lang types.  For protobuf you have to create a complete new class.  Let's call it protobuf.MyMultiFloatProtos.MyMultiFloat.
+
+To match this to a Float array:
+\begin{lstlisting}
+    <match from="protobuf.MyMultiFloatProtos.MyMultiFloat" to="[Ljava.lang.Float;" repeated="true">
+      <constructor parameter="float"/>
+      <getter name="getValue"/>
+    </match>
+\end{lstlisting}
+The most important difference is the attribute repeated="true".  The name of the Float array follows java naming conventions (wrapping into "[L" and ";").  The rest is the same.
+
+The other direction:
+
+\begin{lstlisting}
+    <match from="[Ljava.lang.Float;" to="protobuf.MyMultiFloatProtos.MyMultiFloat" repeated="true">
+      <methodpair getter="floatValue" setter="addValue" type="float"/>
+    </match>
+\end{lstlisting}
+The setter method is here "addValue" - this is an important difference between singlefield and multifield builder classes.  Singlefield builder classes are using the "set" notation, while multifield builder classes are using "add".\\
+
+
+\subsection{Example singlefield protobuf class with more than one value}
+
+Let's say you have created a protobuf version of the Vec3f class of InstantIO.  It takes three float values.  They are named X, Y and Z.  So a match entry would look like this:
+\begin{lstlisting}
+    <match from="protobuf.MyVec3fProtos.MyVec3f" to="org.instantreality.InstantIO.Vec3f">
+      <constructor>
+        <parameter type="float" index="0"/>
+        <parameter type="float" index="1"/>
+        <parameter type="float" index="2"/>
+      </constructor>
+      <getter name="getX" index="0"/>
+      <getter name="getY" index="1"/>
+      <getter name="getZ" index="2"/>
+    </match>
+\end{lstlisting}
+For the constructor element we need now more information, so there are the parameter elements.  Each parameter element tells venice.lib of what primitive type the constructor parameter is, and the order by index (beginning with 0).
+
+The getter elements now need the additional attribut "index", so venice.lib can tell, to what constructor parameter the value goes.
+
+The other direction is easy:
+\begin{lstlisting}
+    <match from="org.instantreality.InstantIO.Vec3f" to="protobuf.MyVec3fProtos.MyVec3f">
+      <methodpair getter="getX" setter="setX" type="float"/>
+      <methodpair getter="getY" setter="setY" type="float"/>
+      <methodpair getter="getZ" setter="setZ" type="float"/>
+    </match>
+\end{lstlisting}
+
+
+\subsection{Example for a multifield protobuf class with more than one value per field}
+
+Let's say you have created a multifield version of the above example:
+\begin{lstlisting}
+    <match from="protobuf.MyMultiVec3fProtos.MyMultiVec3f" to="[Lorg.instantreality.InstantIO.Vec3f;" repeated="true">
+      <constructor>
+        <parameter type="float" index="0"/>
+        <parameter type="float" index="1"/>
+        <parameter type="float" index="2"/>
+      </constructor>
+      <getter name="getX" index="0"/>
+      <getter name="getY" index="1"/>
+      <getter name="getZ" index="2"/>
+    </match>
+\end{lstlisting}
+And the other direction:
+\begin{lstlisting}
+    <match from="[Lorg.instantreality.InstantIO.Vec3f;" to="protobuf.MyMultiVec3fProtos.MyMultiVec3f" repeated="true">
+      <methodpair getter="getX" setter="addX" type="float"/>
+      <methodpair getter="getY" setter="addY" type="float"/>
+      <methodpair getter="getZ" setter="addZ" type="float"/>
+    </match>
+\end{lstlisting}
+
+
+\section{Runtime Commands}
+
+While VeniceHub is running it is possible to enter commands via keyboard:\\
+
+\subsection{config}
+Shows all parameters and options of the actual configuration.
+
+\subsection{h}
+Shows a short list of important commands.
+
+\subsection{msg}
+Turns on or off messages VeniceHub is showing on the console.
+
+\subsection{offset [\{x\}]}
+Shows or sets the offset for replay. All timestamps will be modified by this offset. This is used mainly to synchronize VeniceHub replay with an RPC linked application (e.g. ELAN). \texttt{x} has to be in milliseconds. Default value is 0.
+
+\subsection{p}
+Switches between pause and play (only if input source is Disk).
+
+\subsection{reset}
+Resets the replay while replaying from Disk. Will start from beginning of the file again.
+
+\subsection{savelag}
+If lag history is activated, this command will cause VeniceHub to save the collected lag data to file.
+
+\subsection{seek \{timestamp\}}
+Seeks for a timestamp (in milliseconds) while replaying from Disk.
+
+\subsection{skip \{time\} [ms|s|m|h]}
+Skips the given time while replaying from Disk. If the unit parameter is omitted, time will be interpreted as milliseconds. Use negative values to skip backwards.
+
+\subsection{time}
+Shows the timestamp of the last replayed data object. Will be modified by offset, if an offset was given.
+
+\subsection{xio}
+Shows the XIO codes VeniceHub is using. XIO codes are the tag names of XIO lines representing the data type. For example \texttt{sfstring} represents by default a singlefield string object. See section \ref{sec:xiocodes} for more information.
+
+
+\section{Troubleshooting}
+
+\subsection{Multicast}
+\label{sec:mc_prob}
+On some operation systems (e.g. Linux) there can be problems with the multicast connection. An error message like the following will be thrown:
+\begin{lstlisting}
+java.net.SocketException: bad argument for IP_MULTICAST_IF: address not bound to any interface
+\end{lstlisting}
+In this case, try the following command for starting VeniceHub:
+\begin{lstlisting}
+java -Djava.net.preferIPv4Stack=true -jar VeniceHub.jar [{config file}]
+\end{lstlisting}
+
+\subsection{Quit}
+\label{sec:quit_prob}
+If there is a fatal error that freezes VeniceHub and it doesn't react to \texttt{q}, or it freezes while trying to end all threads, try pressing \texttt{ctrl} and \texttt{c}.
+
+
+\section{How to setup some Venice scenarios}
+
+In this section the use of VeniceHub together with other Software is shown by some examples.
+
+\subsection{VeniceHub and Kinect}
+
+Scenario: In an experiment a Kinect Sensor is used to get body data. The data needs to be logged (so that it can be replayed for an annotion task).
+
+Solution: The KinectServer \texttt{BodyBasics-D2D.exe} of the VeniceKinectServer repository will receive Kinect data and send it to VeniceHub. A definition of the structure of the data is necessary, lets assume it is called body.xml.
+
+First start VeniceHub with
+\begin{lstlisting}
+    > java -jar VeniceHub.jar -i VP --vpport {port} --vpfile body.xml -o Disk -f bodydata.xio.gz
+\end{lstlisting}
+
+VeniceHub will wait until the KinectServer establishes a connection. For that start
+\begin{lstlisting}
+    > BodyBasics-D2D {port}
+\end{lstlisting}
+
+VeniceHub should show the message, that a connection is established. The data will now be logged to the file bodydata.xio.gz.
+
+\subsection{VeniceHub and ELANMod}
+
+Scenario: In an experiment with Kinect Sensor, Camera and Microphone VeniceHub was used to log the data from the Kinect. The structure of the Kinect data is defined in a slotfile named bodydata.xml and a X3D file named body.x3d was created for InstantPlayer to visualize the Kinect data.
+
+Now the Audio needs to be annotated by listening to the audio, seeing the Video and the visualized Kinect data. Audio and Video will be replayed by ELAN, but the Kinect data can not be visualized by ELAN. For the visualization of the Kinect data the InstantPlayer will be used and for the replay of the Kinect Data VeniceHub will be used. Now the only problem is to synchronize the replay of VeniceHub and ELAN, so that the annotating person can easily listen to the Audio, watch the Video and see the visualization of the Kinect Data, all synchronized.
+
+As an additional difficulty, the Video starts 1500 ms later than the data in the Kinect log file.
+
+Solution: Run VeniceHub with
+\begin{lstlisting}
+    > java -jar VeniceHub.jar -i Disk -f kinectlog.xio.gz -o IIO --offset -1500 -s bodydata.xml
+\end{lstlisting}
+assuming the file with the logged Kinect data is named kinectlog.xio.gz and is in the same directory as VeniceHub.jar. VeniceHub will begin to replay the data into the IIO network, where the InstantPlayer picks up the data and visualizes it.
+
+Now the modified ELAN (ELANMod) is started and as soon as ELAN has started with its replay, it sends seek commands to VeniceHub, so the latter will synchronize its replay.
+
+ELANMod and VeniceHub will both use the default values for the connection. If those needs to be changed, use for VeniceHub the options
+\begin{lstlisting}
+--rpcServerAdress {adress}
+--rpcServerPort {port}
+\end{lstlisting}
+
+To set those values to the configuration of ELANMod, edit the config.properties of ELANMod and change the entrys
+\begin{lstlisting}
+browserIP={adress}
+browserPort={port}
+\end{lstlisting}
+
+If the offset between Video and Kinect data was not set right, it is easily changed during runtime with the \texttt{offset \{ms\}} console command of VeniceHub.
+
+\subsection{Translating IIO $\leftrightarrow$ RSB}
+
+Scenario 1: A data source provides data only via InstantIO (for example KinectServers), but there is a data sink that accepts only data via RSB (for example a Python program - so far there is no implementation of InstantIO for Python).
+
+Solution: Use VeniceHub as a data filter. In the easiest situation, only data types are used that are also available as protobuf types in the default protobuf folder that is included in the release version of VeniceHub.
+
+Then the command will be
+\begin{lstlisting}
+    > java -jar VeniceHub.jar -i IIO -o RSB
+\end{lstlisting}
+
+VeniceHub will silently load the default protobuf types from \texttt{./protobuf} and the default class-matching-definitions-file \texttt{match.xml}.
+
+If there are for some reasons no protobuf types available, it is possible to use a workaround:
+\begin{lstlisting}
+    > java -jar VeniceHub.jar -i IIO -o RSB --rsbtoXIO
+\end{lstlisting}
+In this case, VeniceHub will only use the String data type of RSB (that does not need any protobuf classes), convert the InstantIO data into an XIO line and write this complete line as a String object to RSB.
+The data sink can than parse the XIO line and retrieve all information about original data type, value, timestamp, namespace and sensor label.\\
+
+Scenario 2: A data source provides data only via RSB, but there is a data sink that accepts only data via InstantIO (for example InstantPlayer).
+
+Solution: Use VeniceHub as a filter. Easiest way is
+\begin{lstlisting}
+    > java -jar VeniceHub.jar -i RSB -o IIO [--mcttl {n}]
+\end{lstlisting}
+assuming that the default protobuf classes are sufficient to cover the InstantIO data. If not, the workaround to avoid protobuf classes is
+\begin{lstlisting}
+    > java -jar VeniceHub.jar -i RSB -o IIO --rsbStringsAreXIO
+\end{lstlisting}
+With the \texttt{-\--rsbStringsAreXIO} option, VeniceHub will parse Strings received via RSB in the same way as lines in a log file.
+
+Important is the \texttt{-\--mcttl \{n\}} option, if the data needs to be received on a different machine. The value \{n\} is the number of routers between VeniceHub and the receiving machine (the value can be greater than that number, but not less).
+
+\subsection{Multiple data sources, multiple data loggers}
+
+Scenario 1: In an experiment a lot of different data sources are used and all data needs to be logged on different machines. The used network protocoll is InstantIO and all sources and sinks are connected in a LAN with one router.
+
+Solution: Be sure that all sources are using multicast and that multicast is enabled on each machine.  Start on each logging machine
+\begin{lstlisting}
+    > java -jar VeniceHub -f {filename} [-s {sensorfile}]
+\end{lstlisting}
+The usual \texttt{-i} and \texttt{-o} options are here omitted, because in this case they are identical to the default values.
+
+A sensor file with sensor data definitions in XML format can be given, if only a sub set of the sensor slots has to be logged.
+
+If a source is also an instance of VeniceHub (for example translating some data from RSB to InstantIO), it is necessary to set there the option \texttt{-\--mcttl 1}, so that the data package does not get discarded by the router.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\section{Tables and Figures}
+
+\listoftables{}
+
+\listoffigures{}
+
+\end{document} 

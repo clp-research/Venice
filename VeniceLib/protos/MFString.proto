@@ -1,0 +1,8 @@
+package protobuf;
+
+option java_package = "protobuf";
+option java_outer_classname = "MFStringProtos";
+
+message MFString {
+  repeated string value = 1;
+}

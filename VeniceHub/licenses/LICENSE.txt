@@ -1,0 +1,55 @@
+Copyright (c) 2015 Dialog Systems Group, University of Bielefeld
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+Licenses of third party libraries:
+
+javassist.jar
+    Mozilla v1.1
+    
+jaxp-ri-1.4.jar
+    CDDL v1.0
+    
+jcommander-1.19.jar
+    Apache v2.0
+    
+junit-4.4.jar
+    Eclipse Public License v1.0
+    
+log4j-1.2.15.jar
+    Apache License v2.0
+    
+msgpack-0.6.7.jar
+msgpack-rpc-0.7.0-SNAPSHOT.jar
+    Apache License v2.0
+
+netty-3.5.1.Final.jar
+    Apache License v2.0
+    
+protobuf-java-2.4.1.jar
+    google
+
+rsb-0.10.0.jar
+    GNU LESSER GENERAL PUBLIC LICENSE v3
+
+slf4j-api-1.6.6.jar
+slf4j-simple-1.6.6.jar
+    MIT License (X11)
+    
+venicelib.jar

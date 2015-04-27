@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<Sources>
+<Sensor name="VeniceHub">
+  <Namespace name="testlog">
+  	<slot name="timestring" type="sfstring"/>
+    <!-- <slot name="seconds" type="sffloat"/> -->
+    <slot name="milliseconds" type="sfint32"/>
+    <slot name="MFString" type="mfstring"/>
+  </Namespace>
+</Sensor>
+</Sources>

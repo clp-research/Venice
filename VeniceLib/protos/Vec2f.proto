@@ -1,0 +1,9 @@
+package protobuf;
+
+option java_package = "protobuf";
+option java_outer_classname = "Vec2fProtos";
+
+message Vec2f {
+  optional float x = 1;
+  optional float y = 2;
+}

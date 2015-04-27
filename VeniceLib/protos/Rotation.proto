@@ -1,0 +1,11 @@
+package protobuf;
+
+option java_package = "protobuf";
+option java_outer_classname = "RotationProtos";
+
+message Rotation {
+  optional float q1 = 1;
+  optional float q2 = 2;
+  optional float q3 = 3;
+  optional float q4 = 4;
+}
