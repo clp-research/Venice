@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Dialog Systems Group, University of Bielefeld
+ * Copyright (c) 2015 Dialogue Systems Group, University of Bielefeld
  * All rights reserved.
  *
  * Permission is hereby granted, free  of charge, to any person obtaining
