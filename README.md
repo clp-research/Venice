@@ -16,6 +16,7 @@ Copyright (c) 2015 Dialogue Systems Group, University of Bielefeld.
 * Venice Kinect Server
     * connects to Kinect and sends data to TCP socket for VeniceHub
     * one server for Body data and one for Face data
+    * it is intended for use only with the Kinect v2 Sensor
 
 * Toy Server
     * two examples for servers to send data to network, so that VeniceHub can receive it
