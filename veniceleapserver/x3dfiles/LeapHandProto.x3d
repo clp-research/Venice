@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.2//EN" "http://www.web3d.org/specifications/x3d-3.2.dtd">
+<X3D profile='Full' version='3.0' >
+
+<!-- =================================================
+Short Description: Leap hand prototype. Receiving hand positions and
+                              bone positions, drawing 2 hands
+Filename: LeapHandScript.x3d
+ =================================================--> 
+
+<ProtoDeclare name="HandScript">
+    <ProtoInterface>
+	<field name='handColor' type='SFColor' accessType='initializeOnly' 
+                   value='0 0 1'  appinfo = "The color of hands"/>
+	<field name='handTransparency' type='SFFloat' accessType='initializeOnly' 
+                   value='0.0' appinfo = "Transparency of the hands"/>
+	<field name='fingerCrossSection' type='MFVec2f' 
+                   accessType='initializeOnly' value = "1.00 0.00 0.92
+		   -0.38 0.71 -0.71 0.38 -0.92 0.00 -1.00 -0.38 -0.92 -0.71
+		   -0.71 -0.92 -0.38 -1.00 -0.00 -0.92 0.38 -0.71 0.71 -0.38
+		   0.92 0.00 1.00 0.38 0.92 0.71 0.71 0.92 0.38 1.00 0.00"
+                   scale="1 1" appinfo = "Cross section of fingers" />
+	<field name='PalmPosition' type='SFVec3f' accessType='inputOnly'
+		   appinfo = "positions of the hand center"/>
+
+        <field name='dist0' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='dist1' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='dist2' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='dist3' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='dist4' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+
+        <field name='inter0' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='inter1' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='inter2' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='inter3' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='inter4' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+
+        <field name='prox0' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='prox1' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='prox2' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='prox3' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='prox4' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+
+        <field name='meta0' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='meta1' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='meta2' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='meta3' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+        <field name='meta4' type='SFVec3f' accessType='inputOutput' value = '0 0 0'/>
+
+	<field name='hand_changed' type='SFInt32' accessType='inputOnly' 
+		appinfo = "Trigger node to redraw skeleton" />
+    </ProtoInterface>
+    
+
+    <ProtoBody>
+
+	<Group DEF="SolidHand">
+        <AppearanceGroup>
+               <Appearance>
+               <Material>
+                    <IS>
+		<connect nodeField = "diffuseColor" protoField="handColor" />
+		<connect nodeField = "transparency" protoField="handTransparency" />
+	        </IS>
+                </Material>
+                </Appearance>
+
+	
+	<Transform DEF="hand">
+		<Shape>
+			<Sphere radius='15'/>
+		</Shape>
+	</Transform> 
+
+<!-- ============= distal nodes ==============-->
+
+        <Shape containerField='children'>
+		<Extrusion DEF = "dist0" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>        
+		<Extrusion DEF = "dist1" scale="3 3" containerField='geometry'>
+		   <IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+ 
+         <Shape containerField='children'>
+		<Extrusion DEF = "dist2" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "dist3" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "dist4" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+<!--========== Intermediate nodes ========== -->
+
+        <Shape containerField='children'>
+		<Extrusion DEF = "inter0" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "inter1" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+ 
+         <Shape containerField='children'>
+		<Extrusion DEF = "inter2" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "inter3" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "inter4" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+<!--========== Proximal nodes ==========-->
+
+        <Shape containerField='children'>
+		<Extrusion DEF = "prox0" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "prox1" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+ 
+         <Shape containerField='children'>
+		<Extrusion DEF = "prox2" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "prox3" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "prox4" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+<!--========== metacarpal nodes ==========-->
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "meta1" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+ 
+         <Shape containerField='children'>
+		<Extrusion DEF = "meta2" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "meta3" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+
+         <Shape containerField='children'>
+		<Extrusion DEF = "meta4" scale="3 3" containerField='geometry'>
+		<IS>
+		<connect nodeField = "crossSection" protoField="fingerCrossSection" />
+		</IS>
+		</Extrusion>
+	</Shape>
+        </AppearanceGroup>
+	</Group>
+
+<!--========== script ==========-->
+	 <Script DEF='HandScript'>
+	 <field name='hand_changed' accessType='inputOnly' type='SFInt32'/>
+	 <field name='PalmPosition' accessType='inputOutput' type='SFVec3f'  value='0 0 0'/>
+
+        <field name='dist0' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+        <field name='dist1' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+        <field name='dist2' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+        <field name='dist3' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+        <field name='dist4' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+
+         <field name='inter0' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='inter1' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='inter2' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='inter3' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='inter4' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+
+         <field name='prox0' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='prox1' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='prox2' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='prox3' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='prox4' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+	 
+         <field name='meta1' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='meta2' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='meta3' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+         <field name='meta4' accessType='inputOutput' type='SFVec3f' value='0 0 0'/>
+
+     <field accessType='inputOutput' name='handpos' type='SFVec3f'
+		     value = '0 0 0 0 0 0'/>
+
+     <field accessType='inputOutput' name='dist0spine' type='MFVec3f'  
+                value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='dist1spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='dist2spine'  type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>
+     <field accessType='inputOutput' name='dist3spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='dist4spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/> 
+
+     <field accessType='inputOutput' name='inter0spine' type='MFVec3f'  
+                value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='inter1spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='inter2spine'  type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>
+     <field accessType='inputOutput' name='inter3spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='inter4spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/> 
+
+     <field accessType='inputOutput' name='prox0spine' type='MFVec3f'  
+                value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='prox1spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='prox2spine'  type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>
+     <field accessType='inputOutput' name='prox3spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='prox4spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/> 
+
+     <field accessType='inputOutput' name='meta1spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='meta2spine'  type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>
+     <field accessType='inputOutput' name='meta3spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>  
+     <field accessType='inputOutput' name='meta4spine' type='MFVec3f' 
+                 value = '0 0 0 0 0 0'/>  
+
+	<IS>
+   	<connect nodeField='PalmPosition' protoField='PalmPosition' />
+
+        <connect nodeField='dist0' protoField='dist0'/>
+        <connect nodeField='dist1' protoField='dist1'/>
+        <connect nodeField='dist2' protoField='dist2'/>
+        <connect nodeField='dist3' protoField='dist3'/>
+        <connect nodeField='dist4' protoField='dist4'/>
+
+        <connect nodeField='inter0' protoField='inter0'/>
+        <connect nodeField='inter1' protoField='inter1'/>
+        <connect nodeField='inter2' protoField='inter2'/>
+        <connect nodeField='inter3' protoField='inter3'/>
+        <connect nodeField='inter4' protoField='inter4'/>
+
+        <connect nodeField='prox0' protoField='prox0'/>
+        <connect nodeField='prox1' protoField='prox1'/>
+        <connect nodeField='prox2' protoField='prox2'/>
+        <connect nodeField='prox3' protoField='prox3'/>
+        <connect nodeField='prox4' protoField='prox4'/>
+
+        <connect nodeField='meta0' protoField='meta0'/>
+        <connect nodeField='meta1' protoField='meta1'/>
+        <connect nodeField='meta2' protoField='meta2'/>
+        <connect nodeField='meta3' protoField='meta3'/>
+        <connect nodeField='meta4' protoField='meta4'/>
+
+        <connect nodeField='hand_changed' protoField='hand_changed' />
+	</IS>   
+
+	<![CDATA[ecmascript:
+
+	function hand_changed(value)
+        {	 
+	         handpos = PalmPosition;
+
+                 dist0spine[0] = dist0;
+	         dist0spine[1] = inter0;
+	         dist1spine[0] = dist1;
+	         dist1spine[1] = inter1;
+	         dist2spine[0] = dist2;
+	         dist2spine[1] = inter2;
+	         dist3spine[0] = dist3;
+	         dist3spine[1] = inter3;
+	         dist4spine[0] = dist4;
+	         dist4spine[1] = inter4;
+
+                 inter0spine[0] = inter0;
+	         inter0spine[1] = prox0;
+	         inter1spine[0] = inter1;
+	         inter1spine[1] = prox1;
+	         inter2spine[0] = inter2;
+	         inter2spine[1] = prox2;
+	         inter3spine[0] = inter3;
+	         inter3spine[1] = prox3;
+	         inter4spine[0] = inter4;
+	         inter4spine[1] = prox4;
+
+                 prox0spine[0] = prox0;
+	         prox0spine[1] = handpos;
+	         prox1spine[0] = prox1;
+	         prox1spine[1] = meta1;
+	         prox2spine[0] = prox2;
+	         prox2spine[1] = meta2;
+	         prox3spine[0] = prox3;
+	         prox3spine[1] = meta3;
+	         prox4spine[0] = prox4;
+	         prox4spine[1] = meta4;
+
+	         meta1spine[0] = meta1;
+	         meta1spine[1] = handpos;
+	         meta2spine[0] = meta2;
+	         meta2spine[1] = handpos;
+	         meta3spine[0] = meta3;
+	         meta3spine[1] = handpos;
+	         meta4spine[0] = meta4;
+	         meta4spine[1] = handpos;
+	} 	
+	 ]]>
+        </Script>
+
+<ROUTE fromNode='HandScript' fromField='handpos' toNode='hand' toField='translation'/> 
+
+<ROUTE fromNode='HandScript' fromField='dist0spine' toNode='dist0' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='dist1spine' toNode='dist1' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='dist2spine' toNode='dist2' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='dist3spine' toNode='dist3' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='dist4spine' toNode='dist4' toField='spine'/> 
+
+<ROUTE fromNode='HandScript' fromField='inter0spine' toNode='inter0' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='inter1spine' toNode='inter1' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='inter2spine' toNode='inter2' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='inter3spine' toNode='inter3' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='inter4spine' toNode='inter4' toField='spine'/> 
+
+<ROUTE fromNode='HandScript' fromField='prox0spine' toNode='prox0' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='prox1spine' toNode='prox1' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='prox2spine' toNode='prox2' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='prox3spine' toNode='prox3' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='prox4spine'  toNode='prox4' toField='spine'/> 
+
+<ROUTE fromNode='HandScript' fromField='meta1spine' toNode='meta1' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='meta2spine' toNode='meta2' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='meta3spine' toNode='meta3' toField='spine'/> 
+<ROUTE fromNode='HandScript' fromField='meta4spine' toNode='meta4' toField='spine'/> 
+</ProtoBody>
+</ProtoDeclare>   
+
+</X3D>
+
+		
+
+ 
